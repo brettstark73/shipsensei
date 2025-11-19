@@ -1,6 +1,13 @@
-# ShipSensei
+# 🚀 ShipSensei
 
-**Your AI mentor for building and launching products - from idea to production, with zero technical knowledge required.**
+**AI-powered mentorship platform that guides complete beginners from idea to launched product**
+
+> Turn your idea into a live web application in under 30 minutes - no coding experience required.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
 
 ## Vision
 
