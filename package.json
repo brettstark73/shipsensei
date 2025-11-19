@@ -23,6 +23,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.70.0",
     "@auth/prisma-adapter": "^2.11.1",
+    "@octokit/rest": "^22.0.1",
     "@prisma/client": "^7.0.0",
     "ai": "^5.0.97",
     "next": "14.2.18",
