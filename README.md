@@ -34,6 +34,22 @@ ShipSensei provides **end-to-end mentorship** through an intelligent wizard that
 | Best practices | User's responsibility | Developer knows | **Built-in enforcement** |
 | Launch support | None | None | **Landing, marketing, scaling** |
 
+## Project Structure
+
+```
+shipsensei/
+├── docs/                           # Comprehensive project documentation
+├── projects/                       # Related projects and tooling
+│   └── create-quality-automation/  # Quality automation CLI (our battle-tested tooling)
+├── README.md
+├── LICENSE
+└── ...
+```
+
+### Related Projects
+
+**[create-quality-automation](./projects/create-quality-automation/)** - Our production-ready quality automation CLI that we use and recommend. Ships with ESLint 9, Prettier, Husky, GitHub Actions, security scanning, and more. This is the same tooling we'll use to ensure ShipSensei generates high-quality, production-ready code.
+
 ## Status
 
 🚧 **Early Development** - Building in public
