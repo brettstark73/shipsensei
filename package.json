@@ -21,8 +21,10 @@
     "lint:fix": "eslint . --ext .js,.jsx,.mjs,.cjs,.ts,.tsx,.html --fix && stylelint \"src/**/*.{css,scss,sass,less,pcss}\" --fix --allow-empty-input"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/client": "^7.0.0",
+    "ai": "^5.0.97",
     "next": "14.2.18",
     "next-auth": "^4.24.13",
     "prisma": "^7.0.0",

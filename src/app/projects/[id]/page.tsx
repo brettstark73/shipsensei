@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
@@ -24,6 +24,11 @@ type Project = {
   requirements: Requirement[]
 }
 
+type TechStackRecommendation = {
+  stack: string
+  rationale: string
+}
+
 export default function ProjectDetailPage({
   params,
 }: {
@@ -35,6 +40,14 @@ export default function ProjectDetailPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [projectId, setProjectId] = useState<string | null>(null)
+  const [chatStarted, setChatStarted] = useState(false)
+  const [currentAnswer, setCurrentAnswer] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [showRecommendation, setShowRecommendation] = useState(false)
+  const [recommendation, setRecommendation] =
+    useState<TechStackRecommendation | null>(null)
+  const [generatingStack, setGeneratingStack] = useState(false)
+  const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     params.then((p) => setProjectId(p.id))
@@ -50,6 +63,11 @@ export default function ProjectDetailPage({
       fetchProject()
     }
   }, [status, projectId, router])
+
+  useEffect(() => {
+    // Auto-scroll to bottom when new questions appear
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [project?.requirements])
 
   const fetchProject = async () => {
     if (!projectId) return
@@ -67,10 +85,111 @@ export default function ProjectDetailPage({
 
       const data = await response.json()
       setProject(data.project)
+      setChatStarted(data.project.requirements.length > 0)
+
+      // Check if tech stack exists
+      if (data.project.techStack) {
+        try {
+          setRecommendation(JSON.parse(data.project.techStack))
+          setShowRecommendation(true)
+        } catch (e) {
+          // Ignore parse errors
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const startChat = async () => {
+    if (!projectId) return
+
+    try {
+      setSubmitting(true)
+      const response = await fetch(`/api/projects/${projectId}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'start' }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to start chat')
+      }
+
+      const data = await response.json()
+      setProject((prev) =>
+        prev ? { ...prev, requirements: data.requirements } : null
+      )
+      setChatStarted(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const submitAnswer = async (requirementId: string) => {
+    if (!projectId || !currentAnswer.trim()) return
+
+    try {
+      setSubmitting(true)
+      const response = await fetch(`/api/projects/${projectId}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'answer',
+          requirementId,
+          answer: currentAnswer.trim(),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to submit answer')
+      }
+
+      const data = await response.json()
+      setProject((prev) =>
+        prev ? { ...prev, requirements: data.requirements } : null
+      )
+      setCurrentAnswer('')
+
+      // If chat is completed, show recommendation option
+      if (data.completed) {
+        setShowRecommendation(true)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const generateStackRecommendation = async () => {
+    if (!projectId) return
+
+    try {
+      setGeneratingStack(true)
+      const response = await fetch(
+        `/api/projects/${projectId}/recommend-stack`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to generate recommendation')
+      }
+
+      const data = await response.json()
+      setRecommendation(data.recommendation)
+      setProject(data.project)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setGeneratingStack(false)
     }
   }
 
@@ -85,7 +204,7 @@ export default function ProjectDetailPage({
     )
   }
 
-  if (error || !project) {
+  if (error && !project) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -104,9 +223,15 @@ export default function ProjectDetailPage({
     )
   }
 
+  if (!project) return null
+
+  const currentQuestion = project.requirements.find((r) => !r.answer)
+  const answeredCount = project.requirements.filter((r) => r.answer).length
+  const allAnswered = project.requirements.every((r) => r.answer)
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
           <button
@@ -143,89 +268,196 @@ export default function ProjectDetailPage({
           </div>
         </div>
 
-        {/* Coming Soon Message */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
-          <div className="text-6xl mb-4">🚧</div>
-          <h2 className="text-2xl font-bold text-blue-900 mb-2">
-            Requirements Chat Coming Soon
-          </h2>
-          <p className="text-blue-800 mb-6">
-            The AI-powered requirements discovery chat interface is currently in
-            development. This feature will help you refine your project idea
-            through intelligent Q&A.
-          </p>
-          <div className="bg-white rounded-lg p-6 text-left max-w-2xl mx-auto">
-            <h3 className="font-semibold text-gray-900 mb-3">
-              What you'll be able to do:
-            </h3>
-            <ul className="text-sm text-gray-700 space-y-2">
-              <li>
-                ✅ Chat with AI to discover your true requirements
-              </li>
-              <li>
-                ✅ Answer 5-10 smart questions about your project
-              </li>
-              <li>
-                ✅ Get personalized tech stack recommendations
-              </li>
-              <li>
-                ✅ Generate a working project based on your answers
-              </li>
-            </ul>
+        {/* Error Banner */}
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+            <button
+              onClick={() => setError(null)}
+              className="ml-4 underline"
+            >
+              Dismiss
+            </button>
           </div>
-        </div>
+        )}
 
-        {/* Project Info */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">
-              Project Details
-            </h3>
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt className="text-gray-500">Created</dt>
-                <dd className="text-gray-900">
-                  {new Date(project.createdAt).toLocaleDateString()}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-gray-500">Last Updated</dt>
-                <dd className="text-gray-900">
-                  {new Date(project.updatedAt).toLocaleDateString()}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-gray-500">Requirements</dt>
-                <dd className="text-gray-900">
-                  {project.requirements.length} question
-                  {project.requirements.length !== 1 ? 's' : ''}
-                </dd>
-              </div>
-            </dl>
+        {/* Main Content */}
+        {!chatStarted ? (
+          /* Welcome Screen */
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <div className="text-center">
+              <div className="text-6xl mb-6">💬</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Let's Discover Your Requirements
+              </h2>
+              <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+                I'll ask you 5-10 smart questions to understand what you want
+                to build. This helps us recommend the right tech stack and
+                generate a project that fits your needs.
+              </p>
+              <button
+                onClick={startChat}
+                disabled={submitting}
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+              >
+                {submitting ? 'Starting...' : 'Start Requirements Chat'}
+              </button>
+            </div>
           </div>
+        ) : (
+          /* Chat Interface */
+          <div className="space-y-6">
+            {/* Progress Bar */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-gray-700">
+                  Progress
+                </span>
+                <span className="text-sm text-gray-600">
+                  {answeredCount} / {project.requirements.length} answered
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{
+                    width: `${(answeredCount / project.requirements.length) * 100}%`,
+                  }}
+                />
+              </div>
+            </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Next Steps</h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start">
-                <span className="mr-2">1.</span>
-                <span>Complete requirements discovery (coming soon)</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">2.</span>
-                <span>Review tech stack recommendation</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">3.</span>
-                <span>Generate your project</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">4.</span>
-                <span>Deploy to production</span>
-              </li>
-            </ul>
+            {/* Chat Messages */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-h-[600px] overflow-y-auto">
+              <div className="space-y-6">
+                {project.requirements.map((req, index) => (
+                  <div key={req.id}>
+                    {/* Question from AI */}
+                    <div className="flex items-start mb-4">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                        AI
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <div className="bg-blue-50 rounded-lg p-4">
+                          <p className="text-gray-900">{req.question}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* User Answer */}
+                    {req.answer && (
+                      <div className="flex items-start justify-end mb-4">
+                        <div className="mr-3 flex-1 text-right">
+                          <div className="bg-gray-100 rounded-lg p-4 inline-block text-left">
+                            <p className="text-gray-900">{req.answer}</p>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-semibold">
+                          U
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Answer Input (for current question) */}
+                    {!req.answer && currentQuestion?.id === req.id && (
+                      <div className="mt-4">
+                        <textarea
+                          value={currentAnswer}
+                          onChange={(e) => setCurrentAnswer(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault()
+                              submitAnswer(req.id)
+                            }
+                          }}
+                          placeholder="Type your answer... (Press Enter to send, Shift+Enter for new line)"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
+                          rows={3}
+                          disabled={submitting}
+                        />
+                        <div className="mt-2 flex justify-between items-center">
+                          <p className="text-xs text-gray-500">
+                            {currentAnswer.length} / 5000 characters
+                          </p>
+                          <button
+                            onClick={() => submitAnswer(req.id)}
+                            disabled={submitting || !currentAnswer.trim()}
+                            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {submitting ? 'Sending...' : 'Send'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {/* Completion Message */}
+                {allAnswered && !recommendation && (
+                  <div className="text-center py-6 border-t border-gray-200">
+                    <div className="text-4xl mb-4">🎉</div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      Requirements Complete!
+                    </h3>
+                    <p className="text-gray-600 mb-6">
+                      Great! Now let's get you a tech stack recommendation.
+                    </p>
+                    <button
+                      onClick={generateStackRecommendation}
+                      disabled={generatingStack}
+                      className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
+                    >
+                      {generatingStack
+                        ? 'Generating...'
+                        : 'Get Tech Stack Recommendation'}
+                    </button>
+                  </div>
+                )}
+
+                <div ref={chatEndRef} />
+              </div>
+            </div>
+
+            {/* Tech Stack Recommendation */}
+            {recommendation && (
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-sm border border-green-200 p-8">
+                <div className="flex items-start mb-4">
+                  <div className="text-4xl mr-4">🛠️</div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      Recommended Tech Stack
+                    </h3>
+                    <div className="bg-white rounded-lg p-4 mb-4">
+                      <p className="text-lg font-semibold text-blue-600">
+                        {recommendation.stack}
+                      </p>
+                    </div>
+                    <p className="text-gray-700 mb-6">
+                      {recommendation.rationale}
+                    </p>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => router.push('/dashboard')}
+                        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                      >
+                        Back to Dashboard
+                      </button>
+                      <button
+                        onClick={() => {
+                          /* TODO: Implement project generation */
+                          alert('Project generation coming in Phase 3!')
+                        }}
+                        className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
+                      >
+                        Generate Project (Coming Soon)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
