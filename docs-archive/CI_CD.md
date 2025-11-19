@@ -6,12 +6,14 @@
 ## CI/CD Philosophy
 
 **Goals**:
+
 1. **Fast Feedback**: Know within minutes if code works
 2. **Confidence**: Automated checks catch issues before production
 3. **Efficiency**: Minimize manual work, maximize automation
 4. **Safety**: Never ship broken code, easy rollbacks
 
 **Principles**:
+
 - Automate everything (tests, linting, deployment)
 - Fail fast (catch errors early)
 - Keep main branch deployable (always green)
@@ -288,21 +290,25 @@ jobs:
 ## Branch Strategy
 
 **Main Branch** (`main`):
+
 - Always deployable
 - Protected (requires PR, passing CI)
 - Auto-deploys to production on push
 
 **Feature Branches** (`feature/*`):
+
 - Created for new features
 - Must pass CI before merging
 - Squash merge to main (clean history)
 
 **Hotfix Branches** (`hotfix/*`):
+
 - For urgent production fixes
 - Same CI requirements
 - Merge to main → auto-deploy
 
 **Example Flow**:
+
 ```bash
 # Create feature branch
 git checkout -b feature/requirements-wizard
@@ -318,18 +324,21 @@ git push origin feature/requirements-wizard
 ## Deployment Environments
 
 ### Development
+
 - **URL**: `http://localhost:3000`
 - **Purpose**: Local development
 - **Database**: Local Postgres or SQLite
 - **Secrets**: `.env.local` (not committed)
 
 ### Staging (Vercel Preview)
+
 - **URL**: `https://shipsensei-pr-123.vercel.app` (per PR)
 - **Purpose**: Test before production
 - **Database**: Staging database (safe to reset)
 - **Secrets**: Vercel environment variables (staging scope)
 
 ### Production (Vercel)
+
 - **URL**: `https://shipsensei.dev`
 - **Purpose**: Live application
 - **Database**: Production database (Neon)
@@ -342,11 +351,13 @@ git push origin feature/requirements-wizard
 **Trigger**: Git push
 
 **Flow**:
+
 1. Push to branch → Vercel creates preview deployment
 2. CI passes → Preview URL ready
 3. Merge to main → Vercel deploys to production
 
 **Configuration**: `vercel.json`
+
 ```json
 {
   "buildCommand": "pnpm build",
@@ -366,6 +377,7 @@ git push origin feature/requirements-wizard
 **When**: Critical fix can't wait for CI
 
 **Process**:
+
 ```bash
 # Install Vercel CLI
 pnpm add -g vercel
@@ -395,6 +407,7 @@ curl https://shipsensei.dev/api/health
 **When**: Discovered issue after deployment
 
 **Process**:
+
 1. Go to Vercel dashboard
 2. Find previous deployment
 3. Click "Promote to Production"
@@ -407,11 +420,13 @@ curl https://shipsensei.dev/api/health
 ### Managing Secrets
 
 **Vercel Dashboard**:
+
 1. Project Settings → Environment Variables
 2. Add variable (Development, Preview, Production scopes)
 3. Redeploy to apply
 
 **CLI** (for automation):
+
 ```bash
 vercel env add DATABASE_URL production
 vercel env add NEXTAUTH_SECRET production
@@ -421,6 +436,7 @@ vercel env pull .env.local
 ```
 
 **Security**:
+
 - ❌ Never commit `.env` files to Git
 - ✅ Use `.env.example` for documentation
 - ✅ Rotate secrets every 90 days
@@ -434,16 +450,18 @@ vercel env pull .env.local
 
 ```typescript
 // app/api/health/route.ts
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
 
 export async function GET() {
   try {
     // Check database connection
-    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$queryRaw`SELECT 1`
 
     // Check external services
-    const anthropicOk = await fetch('https://api.anthropic.com/v1/health').then(r => r.ok);
+    const anthropicOk = await fetch('https://api.anthropic.com/v1/health').then(
+      r => r.ok
+    )
 
     return NextResponse.json({
       status: 'ok',
@@ -452,12 +470,15 @@ export async function GET() {
         database: 'ok',
         anthropic: anthropicOk ? 'ok' : 'degraded',
       },
-    });
+    })
   } catch (error) {
-    return NextResponse.json({
-      status: 'error',
-      error: error.message,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        status: 'error',
+        error: error.message,
+      },
+      { status: 500 }
+    )
   }
 }
 ```
@@ -467,6 +488,7 @@ export async function GET() {
 ### Deployment Notifications
 
 **Slack Integration**:
+
 ```yaml
 # Add to deploy.yml
 - name: Notify Slack
@@ -492,6 +514,7 @@ export async function GET() {
 ## Performance Budgets
 
 **Enforced in CI**:
+
 ```yaml
 # package.json
 {
@@ -514,6 +537,7 @@ export async function GET() {
 ```
 
 **Budgets**:
+
 - Main bundle: < 500 KB
 - Total page weight: < 2 MB
 - First Contentful Paint: < 1.5s
@@ -524,42 +548,47 @@ export async function GET() {
 **Tool**: PostHog (built-in feature flags)
 
 **Use Cases**:
+
 - Gradual rollouts (10% → 50% → 100%)
 - A/B testing (Claude vs GPT-4 for code generation)
 - Kill switches (disable feature if issues)
 
 **Example**:
+
 ```typescript
-import { useFeatureFlag } from 'posthog-js/react';
+import { useFeatureFlag } from 'posthog-js/react'
 
 export function CodeGenerator() {
-  const useGPT4 = useFeatureFlag('use-gpt4-for-code');
+  const useGPT4 = useFeatureFlag('use-gpt4-for-code')
 
   const generateCode = async () => {
     if (useGPT4) {
-      return await generateWithGPT4();
+      return await generateWithGPT4()
     } else {
-      return await generateWithClaude();
+      return await generateWithClaude()
     }
-  };
+  }
 }
 ```
 
 ## CI/CD Checklist
 
 **Before Merging PR**:
+
 - [ ] All CI checks pass (lint, type-check, tests)
 - [ ] Security scan clean (no critical/high issues)
 - [ ] Code review approved
 - [ ] Preview deployment tested manually (if UI changes)
 
 **After Deployment**:
+
 - [ ] Health check passes
 - [ ] Smoke tests pass (critical flows)
 - [ ] Monitor error rate (Sentry)
 - [ ] Monitor performance (Vercel Analytics)
 
 **If Issues Detected**:
+
 - [ ] Rollback immediately (Vercel dashboard)
 - [ ] Investigate root cause
 - [ ] Fix in new PR

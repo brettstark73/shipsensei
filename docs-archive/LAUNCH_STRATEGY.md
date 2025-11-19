@@ -7,12 +7,14 @@
 ## Launch Philosophy
 
 **Goals**:
+
 1. **Visibility**: Get in front of target audience (indie hackers, non-technical founders)
 2. **Validation**: Confirm product-market fit with real users
 3. **Momentum**: Build initial user base + word-of-mouth
 4. **Learning**: Gather feedback to improve product
 
 **Principles**:
+
 - Build in public (share progress, learnings, setbacks)
 - Launch early and often (soft launches before big launch)
 - Community-first (engage authentically, don't just promote)
@@ -23,6 +25,7 @@
 ### Phase 1: Build Foundation (Weeks 1-4)
 
 **MVP Development**:
+
 - [x] Requirements wizard (conversational)
 - [x] Tech stack recommender
 - [x] Project scaffolding
@@ -30,6 +33,7 @@
 - [ ] One-click deployment (Vercel integration)
 
 **Landing Page** (shipsensei.dev):
+
 - Hero: "Ship products without code - AI mentor guides you from idea to launch"
 - Social proof: Tweets, testimonials (from beta users)
 - Waitlist signup (email collection)
@@ -37,11 +41,13 @@
 - Pricing page (transparency)
 
 **Content Creation**:
+
 - Blog posts: "Vibe Coding for Non-Technical Founders" (SEO)
 - Twitter threads: Share development progress
 - YouTube: Screen recordings of building features (build in public)
 
 **Community Building**:
+
 - Create Discord server (invite beta users)
 - Twitter presence: @shipsensei
 - Engage in relevant communities (Indie Hackers, r/SideProject)
@@ -53,22 +59,26 @@
 ### Phase 2: Beta Testing (Weeks 5-8)
 
 **Private Beta**:
+
 - Invite 20-30 beta users from waitlist
 - Mix of: indie hackers, non-technical founders, junior developers
 - Direct access: Discord channel, weekly calls
 - Goal: Identify critical bugs, UX issues, missing features
 
 **Feedback Collection**:
+
 - User interviews (30-min calls, 10+ users)
 - Analytics (PostHog): Track usage, drop-off points
 - Surveys: "What's confusing? What's missing?"
 
 **Iteration**:
+
 - Fix critical bugs
 - Improve onboarding (reduce time to first deploy)
 - Add missing features (based on feedback)
 
 **Content**:
+
 - Blog: "Building ShipSensei: Lessons from Beta"
 - Twitter: Share beta user success stories (with permission)
 - Case studies: "How [User] Built and Launched [Product] in 2 Days"
@@ -84,12 +94,14 @@
 **Platforms**: Indie Hackers, r/SideProject
 
 **Post Strategy**:
+
 - Authentic, not salesy: "I built this to solve my own problem..."
 - Demo: Short video showing idea → deployed project
 - Ask for feedback: "What features would you want?"
 - Engage: Respond to every comment within 1 hour
 
 **Example Post** (Indie Hackers):
+
 ```
 Title: "I Built an AI Mentor That Helps Non-Technical Founders Ship Products"
 
@@ -120,6 +132,7 @@ I'd love your feedback! What features would make this actually useful for you?
 **Blog Post**: "Why Vibe Coding Needs Mentorship (and How ShipSensei Provides It)"
 
 **Twitter Thread**:
+
 ```
 1/ I just launched ShipSensei - an AI mentor for non-technical founders who want to ship products.
 
@@ -153,6 +166,7 @@ What questions do you have? 👇
 **Why Product Hunt**: High-quality audience, viral potential, credibility
 
 **Preparation**:
+
 - Product Hunt page: Clear description, screenshots, demo video
 - Hunter: Reach out to active PH hunter (or hunt ourselves)
 - Support crew: Alert beta users, friends, followers to upvote/comment
@@ -163,6 +177,7 @@ What questions do you have? 👇
 **Tagline**: "Vibe coding + mentorship. Build and ship products without knowing how to code."
 
 **Description**:
+
 ```
 ShipSensei helps non-technical founders ship real products in hours, not months.
 
@@ -183,6 +198,7 @@ Start free: shipsensei.dev
 ```
 
 **Engagement Strategy**:
+
 - Respond to every comment (within 15 minutes)
 - Live throughout the day (US timezone)
 - Share progress on Twitter ("We're #3 Product of the Day!")
@@ -198,6 +214,7 @@ Start free: shipsensei.dev
 **Post Title**: "Show HN: ShipSensei – AI Mentor for Building and Launching Products"
 
 **Post Strategy**:
+
 - Authentic: "I built this because..."
 - Technical: Show architecture, tech stack
 - Humble: "Early stage, would love feedback"
@@ -216,12 +233,14 @@ Start free: shipsensei.dev
 **Focus**: Convert launch traffic into active users
 
 **Tactics**:
+
 - **Onboarding emails**: 5-day email course ("Ship your first product")
 - **User interviews**: Call 20+ new users, understand pain points
 - **Feature iteration**: Fix top 3 UX issues from feedback
 - **Community**: Active on Discord, respond to questions
 
 **Content**:
+
 - Blog: "ShipSensei Launch: What Worked, What Didn't"
 - Twitter: Share user success stories
 - Case studies: Featured users who shipped products
@@ -233,6 +252,7 @@ Start free: shipsensei.dev
 **Focus**: Long-term organic growth
 
 **Tactics**:
+
 - **SEO-optimized blog posts**:
   - "How to Build a SaaS Without Coding (2026 Guide)"
   - "Vibe Coding vs No-Code: Which Is Right for You?"
@@ -249,6 +269,7 @@ Start free: shipsensei.dev
 **Focus**: Ecosystem growth
 
 **Tactics**:
+
 - **Integrations**: Vercel, Supabase, Clerk (auth), Stripe
 - **Partnerships**: Promote on their blogs/newsletters
 - **Affiliate program**: 20% commission for referrals
@@ -265,6 +286,7 @@ Start free: shipsensei.dev
 **Frequency**: 2 blog posts/week
 
 **Topics**:
+
 - "How to Build a [X]" tutorials (SaaS, marketplace, blog, portfolio)
 - Vibe coding guides
 - Non-technical founder resources
@@ -279,6 +301,7 @@ Start free: shipsensei.dev
 ### 2. Community Engagement
 
 **Platforms**:
+
 - Indie Hackers: Weekly posts, comment on others' projects
 - r/SideProject: Share user success stories
 - r/Entrepreneur: Founder journey posts
@@ -293,6 +316,7 @@ Start free: shipsensei.dev
 **Frequency**: 1 video/week
 
 **Content**:
+
 - "Build [X] with ShipSensei" tutorials
 - Live coding sessions
 - User interviews
@@ -307,6 +331,7 @@ Start free: shipsensei.dev
 **Newsletter**: Weekly tips for non-technical founders
 
 **Segments**:
+
 - Waitlist: Product updates, early access
 - Free users: Feature tips, upgrade prompts
 - PRO users: Advanced tips, case studies
@@ -322,6 +347,7 @@ Start free: shipsensei.dev
 **Budget**: $500/month initially
 
 **Targeting**:
+
 - Keywords: "vibe coding", "build SaaS", "AI code generator"
 - Interests: Indie hackers, startups, entrepreneurship
 
@@ -362,12 +388,14 @@ Start free: shipsensei.dev
 ### Pre-Launch
 
 **Product**:
+
 - [ ] MVP features complete
 - [ ] No critical bugs
 - [ ] Onboarding smooth (< 5 min to first deploy)
 - [ ] Performance acceptable (API p95 < 500ms)
 
 **Marketing**:
+
 - [ ] Landing page live
 - [ ] Demo video recorded (2 min)
 - [ ] Blog posts written (3+)
@@ -375,6 +403,7 @@ Start free: shipsensei.dev
 - [ ] Waitlist > 500 signups
 
 **Operations**:
+
 - [ ] Stripe configured (payment processing)
 - [ ] Analytics set up (PostHog)
 - [ ] Error tracking (Sentry)
@@ -383,18 +412,21 @@ Start free: shipsensei.dev
 ### Launch Day
 
 **Morning** (8 AM PT):
+
 - [ ] Product Hunt post live
 - [ ] Tweet announcement
 - [ ] Email waitlist
 - [ ] Post on Indie Hackers, r/SideProject
 
 **Throughout Day**:
+
 - [ ] Respond to comments (< 30 min response time)
 - [ ] Monitor errors (Sentry)
 - [ ] Track signups (PostHog)
 - [ ] Share milestones ("100 signups in first hour!")
 
 **Evening**:
+
 - [ ] Publish blog post
 - [ ] Thank everyone on Twitter
 - [ ] Plan next day (HN post)
@@ -402,11 +434,13 @@ Start free: shipsensei.dev
 ### Post-Launch
 
 **Week 1**:
+
 - [ ] User interviews (10+)
 - [ ] Fix top 3 bugs
 - [ ] Publish launch retrospective
 
 **Week 2-4**:
+
 - [ ] Iterate based on feedback
 - [ ] Start content marketing
 - [ ] Build community (Discord activity)

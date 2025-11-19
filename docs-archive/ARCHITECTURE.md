@@ -7,6 +7,7 @@
 ## Architecture Overview
 
 ShipSensei is designed as a **modular, AI-powered mentorship platform** with clear separation between:
+
 1. **User-facing wizard** (guides non-technical users)
 2. **AI orchestration layer** (coordinates LLM calls, decision-making)
 3. **Code generation engine** (produces production-ready code)
@@ -16,26 +17,31 @@ ShipSensei is designed as a **modular, AI-powered mentorship platform** with cle
 ### Design Principles
 
 **1. Simplicity First**
+
 - Default to simplest solution that works
 - Progressive complexity (advanced features opt-in)
 - Minimize user decisions (make smart defaults)
 
 **2. Safety by Default**
+
 - Security built-in, not bolted-on
 - Validate everything (inputs, outputs, dependencies)
 - Fail safely (graceful degradation, clear errors)
 
 **3. Modular & Composable**
+
 - Each component has single responsibility
 - Components communicate via well-defined interfaces
 - Easy to swap implementations (e.g., different LLM providers)
 
 **4. Observable & Debuggable**
+
 - Comprehensive logging (user actions, system decisions, errors)
 - Traceability (track generated code to prompts/decisions)
 - Metrics everywhere (performance, usage, quality)
 
 **5. Cost-Conscious**
+
 - Optimize LLM token usage (caching, prompt engineering)
 - Serverless-first (pay for actual usage)
 - Smart batching (reduce API calls)
@@ -125,6 +131,7 @@ ShipSensei is designed as a **modular, AI-powered mentorship platform** with cle
 **Purpose**: Primary interface for complete beginners - step-by-step guided flow.
 
 **Components**:
+
 - **Idea Input**: Free text or voice input with example prompts
 - **Requirements Chat**: Conversational interface for requirement gathering
 - **Tech Stack Selector**: Visual cards showing recommended stack with explanations
@@ -132,6 +139,7 @@ ShipSensei is designed as a **modular, AI-powered mentorship platform** with cle
 - **Code Preview**: Read-only code view with explanations (optional for curious users)
 
 **Tech Stack**:
+
 - **Framework**: Next.js 14 (App Router)
   - Why: SSR for SEO, excellent DX, Vercel deployment
 - **UI Library**: shadcn/ui + Tailwind CSS
@@ -144,6 +152,7 @@ ShipSensei is designed as a **modular, AI-powered mentorship platform** with cle
   - Why: Built-in streaming, UI components, edge-ready
 
 **Key Features**:
+
 - Progressive disclosure (simple view default, advanced opt-in)
 - Real-time preview (see changes instantly)
 - Undo/redo (every action reversible)
@@ -155,6 +164,7 @@ ShipSensei is designed as a **modular, AI-powered mentorship platform** with cle
 **Purpose**: Manage multiple projects, view status, access settings.
 
 **Features**:
+
 - Project list (name, status, last modified, quick actions)
 - Quick actions (deploy, edit, delete, duplicate)
 - Usage metrics (API calls, storage, deployments)
@@ -165,6 +175,7 @@ ShipSensei is designed as a **modular, AI-powered mentorship platform** with cle
 **Purpose**: Direct code editing for users who want more control.
 
 **Features**:
+
 - Monaco Editor (VS Code experience)
 - AI copilot integration (inline suggestions)
 - Live preview (instant feedback)
@@ -177,6 +188,7 @@ ShipSensei is designed as a **modular, AI-powered mentorship platform** with cle
 #### REST API
 
 **Endpoints**:
+
 ```
 POST   /api/projects                 # Create project
 GET    /api/projects                 # List projects
@@ -204,6 +216,7 @@ GET    /api/user/usage                 # Usage metrics
 ```
 
 **Tech Stack**:
+
 - **Runtime**: Next.js API Routes (App Router)
 - **Validation**: Zod schemas
 - **Auth**: NextAuth.js (OAuth + magic links)
@@ -213,22 +226,26 @@ GET    /api/user/usage                 # Usage metrics
 #### WebSocket (Real-time Updates)
 
 **Use Cases**:
+
 - Streaming LLM responses (requirements, explanations, code)
 - Real-time deployment status
 - Collaborative editing (post-MVP)
 
 **Tech Stack**:
+
 - **Implementation**: Vercel AI SDK streaming
 - **Fallback**: Server-Sent Events (SSE)
 
 #### Webhooks (External Integrations)
 
 **Inbound**:
+
 - GitHub: Deployment status, PR updates
 - Vercel: Build/deploy events
 - Stripe: Payment events
 
 **Outbound**:
+
 - User project deployments (notify on completion)
 - Security alerts (critical vulnerabilities found)
 
@@ -239,44 +256,47 @@ GET    /api/user/usage                 # Usage metrics
 **Purpose**: Intelligent routing of AI requests to optimal provider/model.
 
 **Routing Logic**:
+
 ```typescript
 interface LLMRequest {
-  task: 'requirements' | 'stack' | 'code' | 'explanation' | 'review';
-  complexity: 'simple' | 'moderate' | 'complex';
-  maxTokens: number;
-  budget: 'low' | 'normal' | 'high';
+  task: 'requirements' | 'stack' | 'code' | 'explanation' | 'review'
+  complexity: 'simple' | 'moderate' | 'complex'
+  maxTokens: number
+  budget: 'low' | 'normal' | 'high'
 }
 
 function selectProvider(request: LLMRequest): Provider {
   // Requirements & explanations: Claude (better at conversation)
   if (request.task === 'requirements' || request.task === 'explanation') {
-    return { provider: 'anthropic', model: 'claude-3-5-sonnet-20241022' };
+    return { provider: 'anthropic', model: 'claude-3-5-sonnet-20241022' }
   }
 
   // Code generation: GPT-4 or Claude (A/B test)
   if (request.task === 'code') {
-    return { provider: 'openai', model: 'gpt-4-turbo' };
+    return { provider: 'openai', model: 'gpt-4-turbo' }
   }
 
   // Code review: Claude (strong reasoning)
   if (request.task === 'review') {
-    return { provider: 'anthropic', model: 'claude-3-5-sonnet-20241022' };
+    return { provider: 'anthropic', model: 'claude-3-5-sonnet-20241022' }
   }
 
   // Tech stack: Claude (better at structured output)
   if (request.task === 'stack') {
-    return { provider: 'anthropic', model: 'claude-3-5-sonnet-20241022' };
+    return { provider: 'anthropic', model: 'claude-3-5-sonnet-20241022' }
   }
 }
 ```
 
 **Prompt Management**:
+
 - Version-controlled prompts (Git-based, A/B testable)
 - Template system (reusable prompt components)
 - Dynamic context injection (user requirements, tech preferences)
 - Token optimization (caching, compression)
 
 **Caching Strategy**:
+
 - Cache common tech stack recommendations (React + Next.js + Tailwind)
 - Cache security patterns (input validation, auth setup)
 - Cache project templates (scaffolding code)
@@ -287,29 +307,32 @@ function selectProvider(request: LLMRequest): Provider {
 **Purpose**: Maintain conversation context across multiple LLM calls.
 
 **State Tracked**:
+
 - User profile (experience level, preferences, past projects)
 - Project context (requirements, tech stack, code history)
 - Conversation history (for coherent multi-turn interactions)
 
 **Implementation**:
+
 ```typescript
 interface Context {
   user: {
-    id: string;
-    experienceLevel: 'beginner' | 'intermediate' | 'advanced';
-    preferences: TechPreferences;
-  };
+    id: string
+    experienceLevel: 'beginner' | 'intermediate' | 'advanced'
+    preferences: TechPreferences
+  }
   project: {
-    id: string;
-    requirements: Requirements;
-    techStack: TechStack;
-    codeHistory: CodeChange[];
-  };
-  conversation: Message[];
+    id: string
+    requirements: Requirements
+    techStack: TechStack
+    codeHistory: CodeChange[]
+  }
+  conversation: Message[]
 }
 ```
 
 **Optimization**:
+
 - Sliding window (keep last N messages, summarize older)
 - Relevance filtering (only include context relevant to current task)
 - Token budgeting (max context size per request)
@@ -321,29 +344,31 @@ interface Context {
 **Decision Types**:
 
 **1. Tech Stack Selection**
+
 ```typescript
 interface TechStackDecision {
   frontend: {
-    framework: 'Next.js' | 'React + Vite' | 'SvelteKit';
-    reasoning: string;
-    alternatives: Alternative[];
-  };
+    framework: 'Next.js' | 'React + Vite' | 'SvelteKit'
+    reasoning: string
+    alternatives: Alternative[]
+  }
   backend: {
-    approach: 'Serverless' | 'Node.js' | 'Python';
-    reasoning: string;
-  };
+    approach: 'Serverless' | 'Node.js' | 'Python'
+    reasoning: string
+  }
   database: {
-    type: 'PostgreSQL' | 'MongoDB' | 'SQLite';
-    reasoning: string;
-  };
+    type: 'PostgreSQL' | 'MongoDB' | 'SQLite'
+    reasoning: string
+  }
   hosting: {
-    platform: 'Vercel' | 'Netlify' | 'Railway';
-    reasoning: string;
-  };
+    platform: 'Vercel' | 'Netlify' | 'Railway'
+    reasoning: string
+  }
 }
 ```
 
 **Decision Criteria**:
+
 - **Scale**: Expected users, data volume
 - **Complexity**: Feature richness, integration needs
 - **Budget**: Monthly hosting costs
@@ -351,12 +376,14 @@ interface TechStackDecision {
 - **Team**: Solo vs. team, experience level
 
 **2. Architecture Patterns**
+
 - API structure: REST vs. GraphQL vs. tRPC
 - State management: Client-side vs. server-side
 - Authentication: OAuth vs. magic links vs. traditional
 - File handling: Direct upload vs. signed URLs
 
 **3. Security Configuration**
+
 - Authentication strategy (based on user type: B2C vs. B2B)
 - Authorization model (RBAC vs. ABAC)
 - Data encryption (at-rest, in-transit)
@@ -367,12 +394,14 @@ interface TechStackDecision {
 **Purpose**: Transform technical concepts into beginner-friendly explanations.
 
 **Explanation Levels**:
+
 - **ELI5**: Metaphors and analogies (for complete beginners)
 - **Simple**: Plain language, minimal jargon (default)
 - **Technical**: Accurate terminology with explanations
 - **Expert**: Full technical detail (advanced users)
 
 **Example**:
+
 ```typescript
 // Input: "Why did we choose Next.js?"
 // Output (Simple level):
@@ -394,6 +423,7 @@ Built-in API routes eliminate need for separate backend."
 **Purpose**: Extract structured requirements from conversational input.
 
 **Flow**:
+
 1. **Initial Input**: User describes idea in free text
 2. **Domain Detection**: Classify idea type (e-commerce, SaaS, marketplace, etc.)
 3. **Question Generation**: Generate 5-10 clarifying questions based on domain
@@ -402,28 +432,30 @@ Built-in API routes eliminate need for separate backend."
 6. **Document Generation**: Create formatted markdown document
 
 **Question Templates** (Domain: E-commerce):
+
 ```yaml
 questions:
-  - "Who are your target customers? (B2C consumers, B2B businesses, or both?)"
-  - "What products will you sell? (Physical goods, digital products, services?)"
-  - "Do you need inventory management? (Track stock levels, low-stock alerts?)"
-  - "Payment processing? (Stripe, PayPal, Cryptocurrency?)"
-  - "Shipping integration? (Domestic only, international?)"
-  - "User features needed? (Wishlists, reviews, recommendations?)"
-  - "Admin capabilities? (Product management, order fulfillment, analytics?)"
+  - 'Who are your target customers? (B2C consumers, B2B businesses, or both?)'
+  - 'What products will you sell? (Physical goods, digital products, services?)'
+  - 'Do you need inventory management? (Track stock levels, low-stock alerts?)'
+  - 'Payment processing? (Stripe, PayPal, Cryptocurrency?)'
+  - 'Shipping integration? (Domestic only, international?)'
+  - 'User features needed? (Wishlists, reviews, recommendations?)'
+  - 'Admin capabilities? (Product management, order fulfillment, analytics?)'
 ```
 
 **Structured Output**:
+
 ```typescript
 interface Requirements {
-  projectName: string;
-  description: string;
-  targetUsers: UserPersona[];
-  features: Feature[];
-  dataModel: Entity[];
-  userFlows: UserFlow[];
-  constraints: Constraint[];
-  successMetrics: Metric[];
+  projectName: string
+  description: string
+  targetUsers: UserPersona[]
+  features: Feature[]
+  dataModel: Entity[]
+  userFlows: UserFlow[]
+  constraints: Constraint[]
+  successMetrics: Metric[]
 }
 ```
 
@@ -434,96 +466,102 @@ interface Requirements {
 **Recommendation Algorithm**:
 
 **Step 1: Analyze Requirements**
+
 ```typescript
 interface RequirementAnalysis {
-  complexity: 'low' | 'medium' | 'high';
-  scale: 'small' | 'medium' | 'large';  // Expected users, data
-  realtime: boolean;  // WebSocket/real-time features needed
-  auth: 'simple' | 'complex';  // OAuth, MFA, etc.
-  payments: boolean;
-  integrations: string[];  // Third-party APIs
-  hosting: 'static' | 'dynamic' | 'hybrid';
+  complexity: 'low' | 'medium' | 'high'
+  scale: 'small' | 'medium' | 'large' // Expected users, data
+  realtime: boolean // WebSocket/real-time features needed
+  auth: 'simple' | 'complex' // OAuth, MFA, etc.
+  payments: boolean
+  integrations: string[] // Third-party APIs
+  hosting: 'static' | 'dynamic' | 'hybrid'
 }
 ```
 
 **Step 2: Score Technologies**
+
 ```typescript
 interface TechScore {
-  technology: string;
+  technology: string
   scores: {
-    fit: number;           // 0-100: How well it matches requirements
-    maturity: number;      // 0-100: Production-readiness, community
-    dx: number;            // 0-100: Developer experience
-    cost: number;          // 0-100: Hosting + licensing costs (higher is cheaper)
-    learning: number;      // 0-100: Ease of learning (higher is easier)
-  };
-  totalScore: number;      // Weighted average
-  reasoning: string;
-  alternatives: Alternative[];
+    fit: number // 0-100: How well it matches requirements
+    maturity: number // 0-100: Production-readiness, community
+    dx: number // 0-100: Developer experience
+    cost: number // 0-100: Hosting + licensing costs (higher is cheaper)
+    learning: number // 0-100: Ease of learning (higher is easier)
+  }
+  totalScore: number // Weighted average
+  reasoning: string
+  alternatives: Alternative[]
 }
 ```
 
 **Scoring Weights** (Beginner-focused):
+
 ```typescript
 const weights = {
-  fit: 0.25,        // Must meet requirements
-  maturity: 0.20,   // Stable, well-documented
-  dx: 0.20,         // Good error messages, debugging
-  cost: 0.20,       // Affordable for bootstrappers
-  learning: 0.15,   // Easy for beginners
-};
+  fit: 0.25, // Must meet requirements
+  maturity: 0.2, // Stable, well-documented
+  dx: 0.2, // Good error messages, debugging
+  cost: 0.2, // Affordable for bootstrappers
+  learning: 0.15, // Easy for beginners
+}
 ```
 
 **Step 3: Generate Recommendation**
+
 ```typescript
 interface Recommendation {
   stack: {
-    frontend: Technology;
-    backend: Technology;
-    database: Technology;
-    hosting: Technology;
-    auth: Technology;
-    payments?: Technology;
-  };
-  reasoning: string;  // Overall rationale
-  tradeoffs: string;  // What we're optimizing for vs. against
-  alternatives: StackAlternative[];  // Other valid options
+    frontend: Technology
+    backend: Technology
+    database: Technology
+    hosting: Technology
+    auth: Technology
+    payments?: Technology
+  }
+  reasoning: string // Overall rationale
+  tradeoffs: string // What we're optimizing for vs. against
+  alternatives: StackAlternative[] // Other valid options
   estimatedCost: {
-    monthly: number;
-    description: string;
-  };
+    monthly: number
+    description: string
+  }
 }
 ```
 
 **Example Recommendation** (Simple SaaS):
+
 ```yaml
 stack:
   frontend:
-    technology: "Next.js 14 (App Router) + TypeScript + Tailwind CSS"
-    reasoning: "SSR for SEO, excellent docs, huge community, Vercel deployment"
+    technology: 'Next.js 14 (App Router) + TypeScript + Tailwind CSS'
+    reasoning: 'SSR for SEO, excellent docs, huge community, Vercel deployment'
 
   backend:
-    technology: "Next.js API Routes + tRPC"
-    reasoning: "Serverless (cost-effective), type-safe API, no separate backend needed"
+    technology: 'Next.js API Routes + tRPC'
+    reasoning: 'Serverless (cost-effective), type-safe API, no separate backend needed'
 
   database:
-    technology: "PostgreSQL (Neon/Supabase)"
-    reasoning: "Relational data model fits your needs, generous free tier, easy auth integration"
+    technology: 'PostgreSQL (Neon/Supabase)'
+    reasoning: 'Relational data model fits your needs, generous free tier, easy auth integration'
 
   hosting:
-    technology: "Vercel"
-    reasoning: "Zero-config Next.js deployment, automatic HTTPS, preview deployments"
+    technology: 'Vercel'
+    reasoning: 'Zero-config Next.js deployment, automatic HTTPS, preview deployments'
 
   auth:
-    technology: "NextAuth.js + OAuth (GitHub/Google)"
-    reasoning: "Social login (less friction), secure, well-maintained"
+    technology: 'NextAuth.js + OAuth (GitHub/Google)'
+    reasoning: 'Social login (less friction), secure, well-maintained'
 
 estimatedCost:
   monthly: $0-25
-  description: "Free tier for MVP (<100K requests/mo), ~$20/mo as you grow"
+  description: 'Free tier for MVP (<100K requests/mo), ~$20/mo as you grow'
 ```
 
 **Knowledge Base**:
+
 - Technology database (frameworks, libraries, tools)
 - Compatibility matrix (what works well together)
 - Cost calculator (hosting + services)
@@ -536,49 +574,55 @@ estimatedCost:
 **Generation Strategy**:
 
 **1. Template-Based Generation** (MVP)
+
 - Pre-built templates for common patterns (CRUD, auth, forms)
 - Variable substitution (customize for specific requirements)
 - Composable modules (combine templates for complex features)
 
 **Advantages**:
+
 - Fast (no LLM latency)
 - Consistent quality (vetted code)
 - Predictable output
 - Cost-effective (no API calls)
 
 **Limitations**:
+
 - Less flexible (custom features harder)
 - Requires template maintenance
 
 **2. AI-Assisted Generation** (Post-MVP)
+
 - LLM generates custom code for unique requirements
 - Template retrieval (find similar examples, modify)
 - Hybrid approach (templates + AI customization)
 
 **Code Quality Gates**:
+
 ```typescript
 interface QualityChecks {
   linting: {
-    tool: 'ESLint' | 'Prettier';
-    passed: boolean;
-    errors: LintError[];
-  };
+    tool: 'ESLint' | 'Prettier'
+    passed: boolean
+    errors: LintError[]
+  }
   security: {
-    tool: 'Snyk' | 'npm audit';
-    vulnerabilities: Vulnerability[];
-  };
+    tool: 'Snyk' | 'npm audit'
+    vulnerabilities: Vulnerability[]
+  }
   testing: {
-    coverage: number;  // %
-    passing: boolean;
-  };
+    coverage: number // %
+    passing: boolean
+  }
   performance: {
-    bundleSize: number;  // KB
-    lighthouse: number;  // Score
-  };
+    bundleSize: number // KB
+    lighthouse: number // Score
+  }
 }
 ```
 
 **Code Generation Flow**:
+
 1. **Parse Requirements**: Extract features to implement
 2. **Select Templates**: Match requirements to code templates
 3. **Customize**: Fill in variables (names, types, logic)
@@ -587,6 +631,7 @@ interface QualityChecks {
 6. **Explain**: Generate code explanations for user
 
 **Project Structure** (Example: Next.js SaaS):
+
 ```
 project/
 ├── app/
@@ -624,11 +669,13 @@ project/
 **Scan Types**:
 
 **1. Dependency Scanning**
+
 - Check for known CVEs (npm audit, Snyk)
 - License compliance (avoid GPL if needed)
 - Outdated packages (update recommendations)
 
 **2. Code Pattern Detection**
+
 - SQL injection risks (raw queries, string concatenation)
 - XSS vulnerabilities (innerHTML, dangerouslySetInnerHTML)
 - Exposed secrets (API keys, passwords in code)
@@ -636,6 +683,7 @@ project/
 - CSRF vulnerabilities (missing tokens)
 
 **3. Configuration Audit**
+
 - Security headers (CSP, HSTS, X-Frame-Options)
 - HTTPS enforcement
 - CORS configuration
@@ -643,34 +691,37 @@ project/
 - Input validation
 
 **4. Access Control Review**
+
 - Authorization checks (API routes protected)
 - Role-based access (proper role validation)
 - Data isolation (users can only access their data)
 
 **Severity Levels & Actions**:
+
 ```typescript
 enum Severity {
-  CRITICAL = 'critical',  // Blocks deployment
-  HIGH = 'high',          // Warning, requires acknowledgment
-  MEDIUM = 'medium',      // Info, track in dashboard
-  LOW = 'low',            // FYI, best practice
+  CRITICAL = 'critical', // Blocks deployment
+  HIGH = 'high', // Warning, requires acknowledgment
+  MEDIUM = 'medium', // Info, track in dashboard
+  LOW = 'low', // FYI, best practice
 }
 
 interface SecurityIssue {
-  severity: Severity;
-  category: 'dependency' | 'code' | 'config' | 'access';
-  title: string;
-  description: string;
+  severity: Severity
+  category: 'dependency' | 'code' | 'config' | 'access'
+  title: string
+  description: string
   location: {
-    file: string;
-    line?: number;
-  };
-  remediation: string;  // How to fix
-  references: string[];  // Links to docs/CVE
+    file: string
+    line?: number
+  }
+  remediation: string // How to fix
+  references: string[] // Links to docs/CVE
 }
 ```
 
 **Automated Remediation**:
+
 - Dependency updates (safe version bumps)
 - Add missing security headers
 - Generate .env.example (if secrets detected)
@@ -683,79 +734,83 @@ interface SecurityIssue {
 **Test Generation**:
 
 **1. Unit Tests** (Functions, Components)
+
 ```typescript
 // Auto-generated test for utility function
 describe('formatCurrency', () => {
   it('formats USD correctly', () => {
-    expect(formatCurrency(1234.56, 'USD')).toBe('$1,234.56');
-  });
+    expect(formatCurrency(1234.56, 'USD')).toBe('$1,234.56')
+  })
 
   it('handles zero', () => {
-    expect(formatCurrency(0, 'USD')).toBe('$0.00');
-  });
+    expect(formatCurrency(0, 'USD')).toBe('$0.00')
+  })
 
   it('handles negative numbers', () => {
-    expect(formatCurrency(-100, 'USD')).toBe('-$100.00');
-  });
-});
+    expect(formatCurrency(-100, 'USD')).toBe('-$100.00')
+  })
+})
 ```
 
 **2. Integration Tests** (API Routes)
+
 ```typescript
 // Auto-generated test for API endpoint
 describe('POST /api/projects', () => {
   it('creates project for authenticated user', async () => {
-    const session = await getTestSession();
+    const session = await getTestSession()
     const response = await fetch('/api/projects', {
       method: 'POST',
-      headers: { 'Cookie': session.cookie },
+      headers: { Cookie: session.cookie },
       body: JSON.stringify({ name: 'Test Project' }),
-    });
+    })
 
-    expect(response.status).toBe(201);
-    const data = await response.json();
-    expect(data).toHaveProperty('id');
-    expect(data.name).toBe('Test Project');
-  });
+    expect(response.status).toBe(201)
+    const data = await response.json()
+    expect(data).toHaveProperty('id')
+    expect(data.name).toBe('Test Project')
+  })
 
   it('returns 401 for unauthenticated user', async () => {
     const response = await fetch('/api/projects', {
       method: 'POST',
       body: JSON.stringify({ name: 'Test Project' }),
-    });
+    })
 
-    expect(response.status).toBe(401);
-  });
-});
+    expect(response.status).toBe(401)
+  })
+})
 ```
 
 **3. E2E Tests** (Critical Flows)
+
 ```typescript
 // Auto-generated Playwright test
 test('user can create and deploy project', async ({ page }) => {
-  await page.goto('/');
-  await page.click('text=Start building');
+  await page.goto('/')
+  await page.click('text=Start building')
 
   // Login
-  await page.click('text=Login with GitHub');
+  await page.click('text=Login with GitHub')
   // ... OAuth flow ...
 
   // Create project
-  await page.fill('[name="idea"]', 'A todo app');
-  await page.click('text=Generate requirements');
-  await page.waitForSelector('text=Requirements generated');
+  await page.fill('[name="idea"]', 'A todo app')
+  await page.click('text=Generate requirements')
+  await page.waitForSelector('text=Requirements generated')
 
   // Deploy
-  await page.click('text=Deploy to production');
-  await page.waitForSelector('text=Deployment successful', { timeout: 60000 });
+  await page.click('text=Deploy to production')
+  await page.waitForSelector('text=Deployment successful', { timeout: 60000 })
 
   // Verify
-  const url = await page.locator('[data-testid="project-url"]').textContent();
-  expect(url).toContain('vercel.app');
-});
+  const url = await page.locator('[data-testid="project-url"]').textContent()
+  expect(url).toContain('vercel.app')
+})
 ```
 
 **Test Execution Strategy**:
+
 - On-demand (user triggers)
 - Pre-deploy (gate deployment on tests passing)
 - Scheduled (nightly regression tests)
@@ -768,17 +823,19 @@ test('user can create and deploy project', async ({ page }) => {
 **Supported Platforms**:
 
 **1. Vercel** (Primary for Next.js)
+
 ```typescript
 interface VercelDeployment {
-  projectId: string;
-  gitRepo: string;
-  framework: 'nextjs' | 'react' | 'vite';
-  envVars: Record<string, string>;
-  domains: string[];
+  projectId: string
+  gitRepo: string
+  framework: 'nextjs' | 'react' | 'vite'
+  envVars: Record<string, string>
+  domains: string[]
 }
 ```
 
 **Deployment Flow**:
+
 1. Pre-deploy validation (tests pass, security clear)
 2. Build project (optimize for production)
 3. Push to GitHub (project repo)
@@ -792,6 +849,7 @@ interface VercelDeployment {
 **3. Railway** (For full-stack apps with backend)
 
 **Deployment Status Tracking**:
+
 ```typescript
 enum DeploymentStatus {
   PENDING = 'pending',
@@ -802,17 +860,18 @@ enum DeploymentStatus {
 }
 
 interface Deployment {
-  id: string;
-  projectId: string;
-  status: DeploymentStatus;
-  url?: string;
-  buildLogs: string[];
-  createdAt: Date;
-  completedAt?: Date;
+  id: string
+  projectId: string
+  status: DeploymentStatus
+  url?: string
+  buildLogs: string[]
+  createdAt: Date
+  completedAt?: Date
 }
 ```
 
 **Rollback Capability**:
+
 - Keep last 5 deployments
 - One-click rollback to previous version
 - Automatic rollback on critical errors
@@ -824,6 +883,7 @@ interface Deployment {
 **Purpose**: Store user data, projects, metadata.
 
 **Schema Overview**:
+
 ```sql
 -- Users
 CREATE TABLE users (
@@ -879,6 +939,7 @@ CREATE TABLE usage (
 **Purpose**: Cache frequently accessed data, session storage.
 
 **Cached Data**:
+
 - User sessions (NextAuth.js)
 - Tech stack recommendations (common stacks)
 - LLM responses (for identical prompts)
@@ -891,6 +952,7 @@ CREATE TABLE usage (
 **Purpose**: Store generated code, assets, backups.
 
 **Bucket Structure**:
+
 ```
 shipsensei-storage/
 ├── projects/
@@ -911,6 +973,7 @@ shipsensei-storage/
 **Purpose**: Semantic search for tech recommendations, code examples.
 
 **Use Cases**:
+
 - Find similar project requirements → recommend similar stacks
 - Search code examples → provide relevant templates
 - Retrieve documentation snippets → explain concepts
@@ -918,6 +981,7 @@ shipsensei-storage/
 **Implementation**: Pinecone or Weaviate
 
 **Indexed Data**:
+
 - Tech stack recommendations (requirements → stack mapping)
 - Code templates (description → template)
 - Documentation (concept → explanation)
@@ -928,6 +992,7 @@ shipsensei-storage/
 **Purpose**: Version control for generated projects.
 
 **Strategy**:
+
 - **Option A**: ShipSensei GitHub org, repo per project
   - Pros: Easy integration, familiar to users
   - Cons: Costs (private repos), complexity
@@ -943,23 +1008,27 @@ shipsensei-storage/
 #### Hosting: Vercel
 
 **Why Vercel**:
+
 - Zero-config Next.js deployment
 - Automatic HTTPS, CDN, preview deployments
 - Generous free tier (perfect for MVPs)
 - Edge functions (low latency globally)
 
 **Pricing**:
+
 - Free: Hobby tier (100GB bandwidth/mo)
 - Pro: $20/mo per user (commercial use, 1TB bandwidth)
 
 #### Authentication: GitHub + Google OAuth
 
 **Why OAuth**:
+
 - Reduce friction (no password to remember)
 - Better security (no password storage/reset flow)
 - Social proof (real GitHub/Google accounts)
 
 **Implementation**: NextAuth.js
+
 - Supports multiple providers
 - Session management built-in
 - Database adapter for user storage
@@ -967,12 +1036,14 @@ shipsensei-storage/
 #### Payments: Stripe
 
 **Why Stripe**:
+
 - Industry standard (trusted by users)
 - Excellent docs and SDKs
 - Subscription management built-in
 - PCI compliance handled
 
 **Implementation**:
+
 - Stripe Checkout (hosted payment page)
 - Webhook for subscription events
 - Customer portal (self-service billing)
@@ -980,11 +1051,13 @@ shipsensei-storage/
 #### Analytics: PostHog
 
 **Why PostHog**:
+
 - Open source option (self-hostable)
 - Product analytics + feature flags + A/B testing
 - Privacy-friendly (GDPR compliant)
 
 **Tracked Events**:
+
 - User signup, login
 - Project created, deployed
 - Feature usage (code generation, security scan)
@@ -993,11 +1066,13 @@ shipsensei-storage/
 #### Error Tracking: Sentry
 
 **Why Sentry**:
+
 - Excellent error grouping and insights
 - Performance monitoring (APM)
 - Release tracking (correlate errors to deployments)
 
 **Configuration**:
+
 - Frontend errors (React error boundary)
 - Backend errors (API route exceptions)
 - Performance monitoring (slow API calls)
@@ -1005,11 +1080,13 @@ shipsensei-storage/
 #### Email: Resend
 
 **Why Resend**:
+
 - Modern API (excellent DX)
 - React Email templates (type-safe, beautiful)
 - Good deliverability
 
 **Email Types**:
+
 - Welcome email (onboarding)
 - Magic link login
 - Deployment notifications
@@ -1163,16 +1240,19 @@ User: Clicks "Deploy to production"
 ### Current Architecture Limits
 
 **MVP (0-1K users)**:
+
 - Vercel: Hobby tier (sufficient)
 - Neon: Free tier (1GB storage, 100 hours compute/mo)
 - Upstash Redis: Free tier (10K requests/day)
 
 **Growth (1K-10K users)**:
+
 - Vercel: Pro tier ($20/user/mo)
 - Neon: Scale tier (~$50/mo for 10GB + compute)
 - Upstash: Pay-as-you-go (~$20/mo)
 
 **Scale (10K-100K users)**:
+
 - Vercel: Enterprise (custom pricing)
 - Neon: Pro tier or self-hosted Postgres
 - Redis: Managed Redis (AWS ElastiCache)
@@ -1184,6 +1264,7 @@ User: Clicks "Deploy to production"
 **Issue**: At scale, LLM API calls can get expensive.
 
 **Mitigation**:
+
 - Aggressive caching (common requirements, tech stacks)
 - Template-first approach (reduce AI generation)
 - Tiered features (free tier uses more templates, pro uses more AI)
@@ -1194,6 +1275,7 @@ User: Clicks "Deploy to production"
 **Issue**: Serverless functions can exhaust DB connection pool.
 
 **Mitigation**:
+
 - Connection pooling (PgBouncer)
 - Neon autoscaling (handles serverless well)
 - Query optimization (reduce DB calls)
@@ -1203,6 +1285,7 @@ User: Clicks "Deploy to production"
 **Issue**: Many concurrent deployments can queue up.
 
 **Mitigation**:
+
 - Vercel handles queueing (scales automatically)
 - Rate limit deployments (prevent abuse)
 - Stagger builds (batch less time-sensitive deployments)
@@ -1212,23 +1295,27 @@ User: Clicks "Deploy to production"
 ### Defense in Depth
 
 **Layer 1: Network**
+
 - HTTPS only (redirect HTTP)
 - Vercel DDoS protection
 - Rate limiting (Upstash)
 
 **Layer 2: Application**
+
 - Input validation (Zod schemas)
 - Output encoding (prevent XSS)
 - CSRF protection (NextAuth.js)
 - Security headers (Helmet.js)
 
 **Layer 3: Data**
+
 - Encryption at rest (DB level)
 - Encryption in transit (TLS)
 - Secret management (Vercel env vars, encrypted)
 - Access control (row-level security in DB)
 
 **Layer 4: Code**
+
 - Dependency scanning (Snyk)
 - Code scanning (SonarCloud)
 - Secret detection (GitGuardian)
@@ -1236,29 +1323,32 @@ User: Clicks "Deploy to production"
 ### Authentication & Authorization
 
 **Authentication** (Who are you?):
+
 - NextAuth.js with OAuth providers
 - Session stored in JWT (httpOnly cookie)
 - Refresh token rotation
 
 **Authorization** (What can you do?):
+
 ```typescript
 // Example authorization middleware
 export async function requireAuth(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user) throw new UnauthorizedError();
-  return session.user;
+  const session = await getServerSession()
+  if (!session?.user) throw new UnauthorizedError()
+  return session.user
 }
 
 export async function requireProjectAccess(projectId: string, userId: string) {
-  const project = await db.project.findUnique({ where: { id: projectId } });
-  if (project.userId !== userId) throw new ForbiddenError();
-  return project;
+  const project = await db.project.findUnique({ where: { id: projectId } })
+  if (project.userId !== userId) throw new ForbiddenError()
+  return project
 }
 ```
 
 ### Secrets Management
 
 **Environment Variables**:
+
 ```bash
 # .env.example (checked into Git)
 DATABASE_URL="postgresql://..."
@@ -1268,11 +1358,13 @@ GITHUB_CLIENT_SECRET="your-github-app-secret"
 ```
 
 **Vercel Environment Variables**:
+
 - Development, Preview, Production scopes
 - Encrypted at rest
 - Never exposed to client-side
 
 **User Project Secrets**:
+
 - Stored encrypted in database
 - Injected at deployment time
 - Never logged or exposed in UI
@@ -1282,11 +1374,13 @@ GITHUB_CLIENT_SECRET="your-github-app-secret"
 ### Key Metrics
 
 **Application Metrics**:
+
 - Request latency (p50, p95, p99)
 - Error rate (4xx, 5xx)
 - Throughput (requests/sec)
 
 **Business Metrics**:
+
 - Signups per day
 - Project creations per day
 - Deployments per day
@@ -1294,12 +1388,14 @@ GITHUB_CLIENT_SECRET="your-github-app-secret"
 - Churn rate
 
 **AI Metrics**:
+
 - LLM latency (by task type)
 - Token usage (by task type)
 - Cache hit rate
 - Cost per request
 
 **Quality Metrics**:
+
 - Projects deployed successfully (%)
 - Projects still live after 30 days (%)
 - Average time to first deploy
@@ -1307,12 +1403,14 @@ GITHUB_CLIENT_SECRET="your-github-app-secret"
 ### Alerting
 
 **Critical Alerts** (PagerDuty):
+
 - Site down (availability < 99%)
 - Error rate spike (>5% errors)
 - Database connection exhaustion
 - Deployment failures (>50%)
 
 **Warning Alerts** (Slack):
+
 - Slow responses (p95 latency > 2s)
 - High LLM costs (>$100/day unexpected)
 - Low cache hit rate (<70%)
@@ -1320,16 +1418,18 @@ GITHUB_CLIENT_SECRET="your-github-app-secret"
 ### Logging
 
 **Structured Logging**:
+
 ```typescript
 logger.info('Project created', {
   userId: user.id,
   projectId: project.id,
   techStack: project.techStack.frontend,
   duration: Date.now() - startTime,
-});
+})
 ```
 
 **Log Levels**:
+
 - ERROR: Exceptions, failures
 - WARN: Degraded performance, retries
 - INFO: Important state changes
@@ -1342,16 +1442,19 @@ logger.info('Project created', {
 ### Environments
 
 **1. Development**
+
 - Local development (localhost)
 - Hot reload, debug mode
 - Local DB (SQLite or Docker Postgres)
 
 **2. Preview** (Vercel)
+
 - Every Git branch gets preview URL
 - Use production-like data (sanitized)
 - Test before merging to main
 
 **3. Production** (Vercel)
+
 - Main branch auto-deploys
 - Health checks before traffic shift
 - Rollback on errors
@@ -1400,12 +1503,14 @@ jobs:
 ### MVP Costs (0-1K users)
 
 **Infrastructure**:
+
 - Vercel: $0 (Hobby tier)
 - Neon DB: $0 (Free tier)
 - Upstash Redis: $0 (Free tier)
 - Cloudflare R2: $0 (10GB free)
 
 **Services**:
+
 - Anthropic API: ~$200/mo (10K projects × $0.02)
 - Vercel Pro (for commercial): $20/mo
 - Domain: $12/year
@@ -1415,12 +1520,14 @@ jobs:
 ### Growth Costs (1K-10K users)
 
 **Infrastructure**:
+
 - Vercel Pro: $20/mo
 - Neon Scale: $50/mo
 - Upstash: $20/mo
 - R2 Storage: $5/mo
 
 **Services**:
+
 - Anthropic API: ~$2,000/mo (100K projects)
 - Stripe: 2.9% + 30¢ per transaction
 - PostHog: $0 (self-hosted) or $100/mo
@@ -1428,6 +1535,7 @@ jobs:
 **Total**: ~$2,200/mo
 
 **Revenue** (10K users, 5% PRO conversion):
+
 - 500 PRO users × $19/mo = $9,500/mo
 - **Margin**: ~$7,300/mo
 
@@ -1436,34 +1544,41 @@ jobs:
 ### Technical Risks
 
 **1. LLM Quality**
+
 - **Risk**: Generated code has bugs or security issues
 - **Mitigation**: Template-first approach, extensive testing, human review
 
 **2. API Costs**
+
 - **Risk**: LLM costs spiral out of control
 - **Mitigation**: Aggressive caching, rate limiting, tiered pricing
 
 **3. Vendor Lock-in**
+
 - **Risk**: Too dependent on Vercel/Anthropic
 - **Mitigation**: Abstraction layers, support multiple providers
 
 ### Business Risks
 
 **1. Competition**
+
 - **Risk**: Lovable/Bolt add mentorship features
 - **Mitigation**: Focus on complete beginners, build community, superior UX
 
 **2. Market Validation**
+
 - **Risk**: Users don't want AI mentorship, just code generation
 - **Mitigation**: Early user testing, pivot readiness
 
 **3. Monetization**
+
 - **Risk**: Users won't pay for hosting
 - **Mitigation**: Freemium model, demonstrate value, alternative revenue (templates, consulting)
 
 ---
 
 **Next Steps**:
+
 1. Finalize tech stack (see TECH_STACK.md)
 2. Build proof of concept (requirements wizard)
 3. User testing with 5-10 target users

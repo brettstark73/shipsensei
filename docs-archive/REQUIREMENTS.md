@@ -15,6 +15,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Vision**: Every entrepreneur, creator, and founder can build and launch production-quality software products with confidence.
 
 **Core Philosophy**:
+
 - **Mentorship over automation** - Teach while building, don't just generate code
 - **Opinionated excellence** - Make best-practice decisions for users, explain why
 - **Complete journey** - Support from idea to launched product, not just development
@@ -24,18 +25,21 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### Primary Persona: "Non-Technical Sarah"
 
 **Background**:
+
 - Age: 28-45
 - Role: Entrepreneur, product manager, marketer, designer
 - Technical skill: Can use no-code tools, uncomfortable with code
 - Pain: Has product ideas but can't evaluate feasibility or build MVPs
 
 **Goals**:
+
 - Validate business ideas with real MVPs
 - Launch products without hiring developers (initially)
 - Learn enough to communicate with future technical teams
 - Ship quickly and iterate based on user feedback
 
 **Frustrations**:
+
 - No-code tools too limiting for custom needs
 - Hiring developers expensive and risky for unvalidated ideas
 - Overwhelmed by technical decisions (which framework? what's CI/CD?)
@@ -44,18 +48,21 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### Secondary Persona: "Learning Luis"
 
 **Background**:
+
 - Age: 18-25
 - Role: Student, career switcher, junior developer
 - Technical skill: Basic HTML/CSS, learning to code
 - Pain: Can write code but doesn't understand production-ready development
 
 **Goals**:
+
 - Learn professional development practices
 - Build portfolio projects that demonstrate real skills
 - Understand the "why" behind architectural decisions
 - Ship projects end-to-end, not just tutorials
 
 **Frustrations**:
+
 - Tutorial hell - can follow guides but can't build from scratch
 - Gaps between "hello world" and production applications
 - Don't know what they don't know (security, testing, deployment)
@@ -74,6 +81,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **US-1.4**: As a user, I want a clear requirements document generated from our conversation so that I have a concrete specification to reference.
 
 **Acceptance Criteria**:
+
 - User can input idea as free text or through guided prompts
 - System asks 5-10 intelligent follow-up questions based on idea type
 - System generates requirements doc covering: features, user flows, data model, constraints
@@ -90,6 +98,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **US-2.4**: As a user with constraints, I want to specify budget, timeline, or technical preferences so that recommendations align with my situation.
 
 **Acceptance Criteria**:
+
 - System analyzes requirements and recommends complete stack (frontend, backend, database, hosting)
 - Recommendations include: rationale, alternatives considered, trade-offs
 - All recommendations are from production-proven, actively maintained technologies
@@ -106,6 +115,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **US-3.4**: As a user planning to iterate, I want version control initialized and configured so that I can track changes safely.
 
 **Acceptance Criteria**:
+
 - One-click project initialization with chosen tech stack
 - Project includes: proper structure, dependencies, environment variables, .gitignore, security configs
 - Testing framework configured with example tests
@@ -123,6 +133,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **US-4.4**: As a learning user, I want explanations of generated code so that I understand what's happening and can modify it.
 
 **Acceptance Criteria**:
+
 - Task breakdown: Features decomposed into achievable steps with guidance
 - Real-time code review: Catch security issues, anti-patterns, bugs before commit
 - Natural language to code: User describes feature → system generates + explains code
@@ -139,6 +150,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **US-5.4**: As a user planning to scale, I want performance monitoring from day one so that I can identify bottlenecks early.
 
 **Acceptance Criteria**:
+
 - Automatic test generation for new features (unit + integration)
 - Security scanning on every commit (dependencies, code patterns, secrets)
 - Code quality gates: linting, formatting, complexity checks
@@ -155,6 +167,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **US-6.4**: As a user gathering feedback, I want user analytics and feedback collection built in so that I can learn from real users.
 
 **Acceptance Criteria**:
+
 - One-click deployment to production (Vercel/Netlify/Railway style)
 - Auto-generated landing page with: value prop, screenshots, waitlist/signup
 - Launch checklist: Product Hunt, HN, Reddit, Twitter, communities
@@ -171,6 +184,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **US-7.4**: As a successful product, I want migration paths to custom infrastructure so that I can graduate from ShipSensei when ready.
 
 **Acceptance Criteria**:
+
 - Feedback analysis: Synthesize user feedback into prioritized improvements
 - Scaling alerts: System detects performance issues and suggests optimizations
 - Team collaboration: Invite members, role-based permissions
@@ -185,6 +199,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Interactive wizard that extracts structured requirements from conversational input.
 
 **Components**:
+
 - Natural language input processing
 - Context-aware follow-up question generation
 - Domain detection (e-commerce, SaaS, marketplace, etc.)
@@ -203,6 +218,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Analyzes requirements and recommends optimal, production-proven technology stack.
 
 **Components**:
+
 - Requirement analysis (scale, complexity, budget, timeline)
 - Technology database (frameworks, libraries, tools with metadata: maturity, cost, learning curve)
 - Decision matrix (scoring based on fit, popularity, maintainability)
@@ -213,6 +229,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Recommended stack with rationale, alternatives, setup commands
 
 **Decision Criteria**:
+
 - Maturity: Active maintenance, large community, production usage
 - Fit: Matches requirements scale and complexity
 - DX: Good documentation, clear error messages, fast iteration
@@ -226,6 +243,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Automated project initialization with best practices built in.
 
 **Components**:
+
 - Template generation (project structure, config files, dependencies)
 - Security baseline (environment variables, secret management, secure defaults)
 - Testing setup (framework, example tests, coverage tools)
@@ -236,6 +254,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Fully configured project repository ready for development
 
 **Security Defaults**:
+
 - Environment variable template with examples
 - CSP headers configured
 - Input validation setup
@@ -249,6 +268,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Real-time development guidance with code generation and review.
 
 **Components**:
+
 - Task decomposition (features → implementable steps)
 - Code generation (natural language → working code)
 - Code explanation (generated code → understanding)
@@ -259,6 +279,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Generated code with explanations, improvement suggestions
 
 **Quality Gates**:
+
 - Security: No SQL injection, XSS, exposed secrets, insecure dependencies
 - Performance: Avoid N+1 queries, unnecessary re-renders, memory leaks
 - Best practices: Follow framework conventions, proper error handling, logging
@@ -271,6 +292,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Automatic test generation and continuous validation.
 
 **Components**:
+
 - Test generation (unit tests for functions, integration tests for flows)
 - Test execution (on-demand and automatic on save)
 - Coverage tracking (visual coverage reports)
@@ -280,6 +302,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Test suite, coverage report, recommendations
 
 **Test Types**:
+
 - Unit: Individual functions and components
 - Integration: Feature flows and API endpoints
 - E2E: Critical user journeys (using Playwright)
@@ -292,6 +315,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Continuous security scanning and vulnerability prevention.
 
 **Components**:
+
 - Dependency scanning (known vulnerabilities in packages)
 - Code pattern detection (SQL injection, XSS, exposed secrets)
 - Security headers validation (CSP, HSTS, etc.)
@@ -302,6 +326,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Security report, blocking issues, recommendations
 
 **Severity Levels**:
+
 - **Critical**: Blocks deployment (exposed secrets, SQL injection, critical CVEs)
 - **High**: Requires acknowledgment (missing auth checks, moderate CVEs)
 - **Medium**: Warning (suboptimal security headers, weak validation)
@@ -314,6 +339,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Automated deployment to production hosting.
 
 **Components**:
+
 - Hosting provider integration (Vercel, Netlify, Railway, Render)
 - Build optimization (bundling, minification, caching)
 - Environment variable management (secure secret injection)
@@ -324,6 +350,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Live production URL, deployment status, rollback capability
 
 **Deployment Flow**:
+
 1. Pre-deploy validation (tests pass, security clear, build succeeds)
 2. Build optimization (production mode, asset optimization)
 3. Deploy to hosting (push to provider, environment config)
@@ -337,6 +364,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Automatic marketing landing page creation.
 
 **Components**:
+
 - Value proposition extraction (from requirements, product description)
 - Page generation (hero, features, pricing, CTA, FAQ)
 - Responsive design (mobile-first, accessible)
@@ -347,6 +375,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Professional landing page (HTML/CSS/JS or framework-based)
 
 **Page Sections**:
+
 - Hero: Headline, subheadline, primary CTA, screenshot/demo
 - Social proof: Testimonials, user count, logos (if available)
 - Features: Key benefits with icons/screenshots
@@ -361,6 +390,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: Strategic advice on where and how to launch product.
 
 **Components**:
+
 - Launch platform recommendations (Product Hunt, Hacker News, Reddit, Twitter)
 - Launch checklist (tasks before going public)
 - Community identification (where target users congregate)
@@ -371,6 +401,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Launch plan, checklists, content templates
 
 **Platforms**:
+
 - Product Hunt: Timing, hunter outreach, asset preparation
 - Hacker News: Show HN guidelines, title optimization
 - Reddit: Relevant subreddits, community rules, posting strategy
@@ -384,6 +415,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Description**: User behavior tracking and feedback collection.
 
 **Components**:
+
 - Analytics integration (Google Analytics, Plausible, or simple custom)
 - Event tracking (key user actions, conversion funnels)
 - Feedback widget (in-app feedback collection)
@@ -394,6 +426,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Output**: Analytics dashboard, feedback summary, action items
 
 **Metrics**:
+
 - Traffic: Visitors, page views, sources
 - Engagement: Session duration, bounce rate, returning users
 - Conversion: Signup rate, activation rate, retention
@@ -404,12 +437,14 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### NFR-1: Performance
 
 **Response Time**:
+
 - Requirements generation: < 30 seconds
 - Tech stack recommendation: < 10 seconds
 - Code generation: < 15 seconds (simple), < 60 seconds (complex)
 - Deployment: < 5 minutes (typical web app)
 
 **Scalability**:
+
 - Support 10,000 concurrent users (post-launch)
 - Handle 100+ projects per user
 - Process 1,000+ code generation requests/hour
@@ -419,12 +454,14 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Uptime**: 99.9% availability (excluding planned maintenance)
 
 **Error Handling**:
+
 - Graceful degradation (if AI unavailable, fall back to templates)
 - Clear error messages (what went wrong, how to fix)
 - Automatic retry (transient failures)
 - State preservation (no lost work from crashes)
 
 **Data Durability**:
+
 - Zero data loss for committed projects
 - Automatic backups (daily snapshots)
 - Version history (7-day rollback for PRO, 30-day for TEAM)
@@ -432,17 +469,20 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### NFR-3: Security
 
 **Authentication**:
+
 - Secure auth (OAuth via GitHub/Google + magic link email)
 - MFA optional (PRO/TEAM)
 - Session management (secure tokens, automatic timeout)
 
 **Data Protection**:
+
 - Encryption at rest (project code, user data)
 - Encryption in transit (TLS 1.3)
 - Secret management (encrypted environment variables, never logged)
 - Access control (users can only access their projects)
 
 **Compliance**:
+
 - GDPR ready (data export, deletion on request)
 - SOC 2 Type II (TEAM tier, future)
 
@@ -451,6 +491,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 **Target**: Complete beginners can ship a product within 1 day
 
 **Principles**:
+
 - **Zero jargon**: Explain technical concepts in plain language
 - **Progressive disclosure**: Show simple view by default, advanced on request
 - **Clear feedback**: Always indicate what's happening, what's next
@@ -458,6 +499,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 - **Learn by doing**: Teach concepts as they become relevant
 
 **Accessibility**:
+
 - WCAG 2.1 AA compliance
 - Keyboard navigation
 - Screen reader compatible
@@ -466,16 +508,19 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### NFR-5: Maintainability
 
 **Code Quality**:
+
 - Test coverage > 80% (core features)
 - Linting enforced (Prettier, ESLint)
 - Documentation (inline comments, architecture docs)
 
 **Monitoring**:
+
 - Application metrics (response times, error rates)
 - Business metrics (signups, conversions, retention)
 - Alerting (PagerDuty/Sentry for critical issues)
 
 **Deployment**:
+
 - CI/CD pipeline (automated testing, deployment)
 - Feature flags (gradual rollout, A/B testing)
 - Blue-green deployment (zero-downtime updates)
@@ -485,37 +530,44 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### Primary Metrics
 
 **Activation**:
+
 - Time to first deployed project: < 24 hours (target: < 4 hours)
 - % users who complete requirements → deploy: > 40%
 
 **Retention**:
+
 - Day 7 retention: > 30%
 - Day 30 retention: > 15%
 - Monthly active users (MAU): 10,000 (6 months post-launch)
 
 **Quality**:
+
 - Deployed projects that get real users: > 50%
 - Projects still live after 30 days: > 40%
 
 ### Secondary Metrics
 
 **Engagement**:
+
 - Projects per user: 2.5 average
 - Sessions per week: 3+ for active users
 - NPS score: > 50
 
 **Revenue** (Post-MVP):
+
 - Free → PRO conversion: > 5%
 - PRO → TEAM conversion: > 10%
 - MRR: $10K (6 months), $50K (12 months)
 
 **Learning**:
+
 - Users who can explain tech stack choices: > 60% (survey)
 - Users who modify generated code successfully: > 40%
 
 ## Out of Scope (MVP)
 
 **Deferred to Post-MVP**:
+
 - Mobile app (web-only initially)
 - Real-time collaboration (team features simplified)
 - Custom AI model training (use existing LLMs)
@@ -524,6 +576,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 - Marketplace for templates/components (future)
 
 **Not Planned**:
+
 - Native mobile development (web apps only)
 - Low-level systems programming (focus on web/SaaS)
 - Game development (different domain expertise)
@@ -534,16 +587,19 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### Constraints
 
 **Technical**:
+
 - Must use battle-tested technologies only (no bleeding edge)
 - Must work on common devices (desktop, tablet, mobile browsers)
 - Must integrate with existing AI APIs (OpenAI, Anthropic)
 
 **Business**:
+
 - Bootstrap budget initially (minimize costs)
 - Build in public (open source core)
 - MVP launch within 3 months
 
 **Legal**:
+
 - Cannot guarantee generated code is bug-free or secure
 - Users own their code (ShipSensei has no rights)
 - Must comply with AI provider terms of service
@@ -551,16 +607,19 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### Assumptions
 
 **User Behavior**:
+
 - Users willing to provide detailed requirements through conversation
 - Users will iterate based on feedback (not one-and-done)
 - Users want to learn, not just get code
 
 **Market**:
+
 - Demand exists for mentorship-focused tool (vs pure code gen)
 - Users will pay for hosting/advanced features
 - "Build in public" strategy attracts community
 
 **Technology**:
+
 - LLMs continue improving (better code generation)
 - Hosting platforms remain affordable/accessible
 - Modern web frameworks remain stable (React, Next.js, etc.)
@@ -570,6 +629,7 @@ ShipSensei is an AI-powered mentorship platform that guides complete beginners t
 ### Appendix A: Technology Evaluation Criteria
 
 When recommending tech stack, evaluate on:
+
 1. **Maturity**: Production usage, years active, major version stability
 2. **Community**: GitHub stars, npm downloads, Stack Overflow questions
 3. **Documentation**: Quality, completeness, examples
@@ -584,6 +644,7 @@ When recommending tech stack, evaluate on:
 ### Appendix B: Security Checklist
 
 Every generated project must include:
+
 - [ ] Environment variables properly configured (.env.example, no secrets in code)
 - [ ] Input validation on all user inputs (prevent injection attacks)
 - [ ] Output encoding (prevent XSS)
@@ -655,6 +716,7 @@ Every generated project must include:
 **Document Status**: Living document, will evolve based on user feedback and market validation.
 
 **Next Steps**:
+
 1. Architecture design (see ARCHITECTURE.md)
 2. Tech stack finalization (see TECH_STACK.md)
 3. Prototype requirements wizard

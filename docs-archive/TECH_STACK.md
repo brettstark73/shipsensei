@@ -7,6 +7,7 @@
 ## Stack Overview
 
 ShipSensei's technology stack is optimized for:
+
 - **Beginner-friendly defaults** - Battle-tested, well-documented technologies
 - **Development speed** - Fast iteration, hot reload, TypeScript safety
 - **Cost efficiency** - Generous free tiers, serverless architecture
@@ -19,6 +20,7 @@ ShipSensei's technology stack is optimized for:
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **SSR + SSG**: SEO-friendly out of the box (critical for marketing pages)
 - **App Router**: React Server Components reduce client-side JavaScript
 - **File-based routing**: Intuitive structure for beginners to understand
@@ -36,6 +38,7 @@ ShipSensei's technology stack is optimized for:
 **Version**: `next@14.2.0`
 
 **Key Features Used**:
+
 - App Router (stable)
 - Server Actions (for form handling)
 - Streaming (real-time AI responses)
@@ -49,6 +52,7 @@ ShipSensei's technology stack is optimized for:
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Type safety**: Catch errors at compile time, not runtime
 - **Better DX**: Autocomplete, refactoring, inline documentation
 - **Industry standard**: Overwhelming preference in modern web development
@@ -56,6 +60,7 @@ ShipSensei's technology stack is optimized for:
 - **Tooling**: Best-in-class editor support (VS Code)
 
 **Configuration**:
+
 ```json
 {
   "compilerOptions": {
@@ -84,6 +89,7 @@ ShipSensei's technology stack is optimized for:
 **Decision**: ✅ CHOSEN (via Next.js)
 
 **Rationale**:
+
 - **Market leader**: Largest ecosystem, most jobs, best learning resources
 - **Server Components**: Reduce client-side JavaScript automatically
 - **Concurrent features**: Suspense, transitions for better UX
@@ -98,6 +104,7 @@ ShipSensei's technology stack is optimized for:
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Utility-first**: Rapid prototyping without leaving HTML
 - **Consistency**: Design system constraints prevent inconsistency
 - **Performance**: Purges unused CSS automatically
@@ -105,6 +112,7 @@ ShipSensei's technology stack is optimized for:
 - **Popularity**: Industry standard, huge community
 
 **Configuration**:
+
 ```javascript
 // tailwind.config.js
 module.exports = {
@@ -113,15 +121,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: { /* brand colors */ },
+        primary: {
+          /* brand colors */
+        },
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
-  ],
-};
+  plugins: [require('@tailwindcss/typography'), require('@tailwindcss/forms')],
+}
 ```
 
 **Alternatives Considered**:
@@ -138,6 +145,7 @@ module.exports = {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Copy-paste components**: Own the code, no package dependency
 - **Accessible**: Built on Radix UI primitives (WCAG compliant)
 - **Customizable**: Full control over styling and behavior
@@ -145,6 +153,7 @@ module.exports = {
 - **Tailwind-based**: Consistent with our styling approach
 
 **Components Used**:
+
 - Button, Input, Select, Dialog, Dropdown, Tabs
 - Form components (integrated with React Hook Form)
 - Data table (for project listings)
@@ -164,6 +173,7 @@ module.exports = {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Simple**: Minimal boilerplate, easy to learn
 - **TypeScript-first**: Excellent type inference
 - **No context needed**: Avoids re-render issues
@@ -171,19 +181,20 @@ module.exports = {
 - **Small bundle**: 1KB gzipped
 
 **Usage**:
+
 ```typescript
 // stores/projectStore.ts
-import { create } from 'zustand';
+import { create } from 'zustand'
 
 interface ProjectState {
-  currentProject: Project | null;
-  setCurrentProject: (project: Project) => void;
+  currentProject: Project | null
+  setCurrentProject: (project: Project) => void
 }
 
-export const useProjectStore = create<ProjectState>((set) => ({
+export const useProjectStore = create<ProjectState>(set => ({
   currentProject: null,
-  setCurrentProject: (project) => set({ currentProject: project }),
-}));
+  setCurrentProject: project => set({ currentProject: project }),
+}))
 ```
 
 **Alternatives Considered**:
@@ -200,6 +211,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Performance**: Minimal re-renders (uncontrolled inputs)
 - **DX**: Simple API, excellent TypeScript support
 - **Validation**: Zod integration for type-safe validation
@@ -207,6 +219,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
 - **Small bundle**: 9KB gzipped
 
 **Example**:
+
 ```typescript
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -239,6 +252,7 @@ export function ProjectForm() {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Streaming**: Real-time AI responses (better UX)
 - **Edge-ready**: Works on Vercel Edge Functions
 - **Multi-provider**: Supports OpenAI, Anthropic, Cohere, etc.
@@ -246,6 +260,7 @@ export function ProjectForm() {
 - **React hooks**: `useChat`, `useCompletion` simplify state management
 
 **Example**:
+
 ```typescript
 import { useChat } from 'ai/react';
 
@@ -276,6 +291,7 @@ export function RequirementsChat() {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Next.js requirement**: Native support in Next.js API routes
 - **LTS**: Long-term support until 2026
 - **Performance**: Fast execution, V8 optimizations
@@ -290,6 +306,7 @@ export function RequirementsChat() {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Integrated**: Same codebase as frontend, no separate backend
 - **Serverless**: Auto-scales, pay-per-request
 - **Edge support**: Deploy globally for low latency
@@ -297,28 +314,30 @@ export function RequirementsChat() {
 - **Simple deployment**: Single Vercel deployment
 
 **Example**:
+
 ```typescript
 // app/api/projects/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 
 const createProjectSchema = z.object({
   name: z.string().min(3),
   description: z.string().optional(),
-});
+})
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession();
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const session = await getServerSession()
+  if (!session)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const body = await req.json();
-  const validated = createProjectSchema.parse(body);
+  const body = await req.json()
+  const validated = createProjectSchema.parse(body)
 
   const project = await db.project.create({
     data: { ...validated, userId: session.user.id },
-  });
+  })
 
-  return NextResponse.json(project, { status: 201 });
+  return NextResponse.json(project, { status: 201 })
 }
 ```
 
@@ -336,6 +355,7 @@ export async function POST(req: NextRequest) {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Type-safe**: Auto-generated types from schema
 - **Great DX**: Intuitive API, excellent autocomplete
 - **Migrations**: Built-in migration system
@@ -343,6 +363,7 @@ export async function POST(req: NextRequest) {
 - **Wide support**: PostgreSQL, MySQL, SQLite, MongoDB
 
 **Example**:
+
 ```prisma
 // prisma/schema.prisma
 datasource db {
@@ -374,16 +395,17 @@ model Project {
 ```
 
 **Usage**:
-```typescript
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+```typescript
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 // Type-safe queries
 const projects = await prisma.project.findMany({
   where: { userId: 'user123' },
   include: { user: true },
-});
+})
 ```
 
 **Alternatives Considered**:
@@ -404,6 +426,7 @@ const projects = await prisma.project.findMany({
 **Provider**: Neon (serverless Postgres)
 
 **Rationale**:
+
 - **Serverless**: Auto-scaling, pay-per-use
 - **PostgreSQL**: Industry-standard relational database
 - **Generous free tier**: 500MB storage, unlimited projects
@@ -411,6 +434,7 @@ const projects = await prisma.project.findMany({
 - **Low latency**: Edge-optimized connections
 
 **Pricing**:
+
 - Free: 500MB, 0.5 compute units
 - Scale: $19/mo, 10GB, autoscaling compute
 - Business: $69/mo, 50GB, higher performance
@@ -429,32 +453,35 @@ const projects = await prisma.project.findMany({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Serverless**: Pay-per-request, no idle costs
 - **Global**: Replicas in multiple regions
 - **REST API**: Works in serverless environments (no persistent connections)
 - **Free tier**: 10K requests/day
 
 **Use Cases**:
+
 - Session storage (NextAuth.js)
 - Rate limiting (API throttling)
 - Cache LLM responses (common requests)
 - Cache tech stack recommendations
 
 **Example**:
-```typescript
-import { Redis } from '@upstash/redis';
 
-const redis = Redis.fromEnv();
+```typescript
+import { Redis } from '@upstash/redis'
+
+const redis = Redis.fromEnv()
 
 // Cache tech stack recommendation
 await redis.set(
   `stack:${requirementsHash}`,
   JSON.stringify(recommendation),
   { ex: 3600 } // 1 hour TTL
-);
+)
 
 // Retrieve cached recommendation
-const cached = await redis.get(`stack:${requirementsHash}`);
+const cached = await redis.get(`stack:${requirementsHash}`)
 ```
 
 ---
@@ -464,12 +491,14 @@ const cached = await redis.get(`stack:${requirementsHash}`);
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **S3-compatible**: Easy migration if needed
 - **Zero egress fees**: Unlike S3 ($0.09/GB)
 - **Global CDN**: Fast access worldwide
 - **Free tier**: 10GB storage, 1M requests/mo
 
 **Use Cases**:
+
 - Generated project code (zip archives)
 - User-uploaded assets (images, files)
 - Template storage (code templates)
@@ -493,17 +522,20 @@ const cached = await redis.get(`stack:${requirementsHash}`);
 **Model**: `claude-3-5-sonnet-20241022`
 
 **Rationale**:
+
 - **Best for reasoning**: Superior code understanding and generation
 - **Longer context**: 200K tokens (handle large codebases)
 - **Safety**: Strong instruction following, less prone to jailbreaks
 - **Streaming**: Excellent real-time response quality
 
 **Pricing**:
+
 - Input: $3 / 1M tokens
 - Output: $15 / 1M tokens
 - Typical project creation: ~20K tokens ($0.30)
 
 **Use Cases**:
+
 - Requirements generation (conversation)
 - Tech stack recommendations (structured reasoning)
 - Code review (deep understanding)
@@ -518,15 +550,18 @@ const cached = await redis.get(`stack:${requirementsHash}`);
 **Model**: `gpt-4-turbo`
 
 **Rationale**:
+
 - **Code generation**: Slightly better for complex code
 - **Function calling**: Excellent for structured outputs
 - **Fallback**: Redundancy if Claude unavailable
 
 **Pricing**:
+
 - Input: $10 / 1M tokens
 - Output: $30 / 1M tokens
 
 **Use Cases**:
+
 - Code generation (specific features)
 - Structured data extraction
 - Backup provider
@@ -542,6 +577,7 @@ const cached = await redis.get(`stack:${requirementsHash}`);
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **OAuth providers**: GitHub, Google, etc. built-in
 - **Magic links**: Passwordless email authentication
 - **Session management**: JWT or database sessions
@@ -549,17 +585,19 @@ const cached = await redis.get(`stack:${requirementsHash}`);
 - **TypeScript**: Fully typed
 
 **Providers**:
+
 - GitHub OAuth (primary for developers)
 - Google OAuth (broad appeal)
 - Magic link email (fallback, no OAuth dependency)
 
 **Example**:
+
 ```typescript
 // auth.config.ts
-import NextAuth from 'next-auth';
-import GitHub from 'next-auth/providers/github';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from '@/lib/db';
+import NextAuth from 'next-auth'
+import GitHub from 'next-auth/providers/github'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import { prisma } from '@/lib/db'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -571,11 +609,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     session({ session, user }) {
-      session.user.id = user.id;
-      return session;
+      session.user.id = user.id
+      return session
     },
   },
-});
+})
 ```
 
 ---
@@ -585,6 +623,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Dependency scanning**: Detects known CVEs
 - **Code scanning**: Finds security issues in code
 - **License compliance**: Checks OSS licenses
@@ -604,6 +643,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Next.js native**: Built by same team, perfect integration
 - **Zero config**: Push to GitHub, auto-deploys
 - **Edge network**: Global CDN, low latency worldwide
@@ -612,6 +652,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 - **Generous free tier**: Hobby plan sufficient for MVP
 
 **Pricing**:
+
 - Hobby: $0 (personal projects, 100GB bandwidth/mo)
 - Pro: $20/user/mo (commercial use, 1TB bandwidth/mo)
 - Enterprise: Custom (SLA, advanced security)
@@ -630,12 +671,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Free**: Unlimited minutes for public repos
 - **Integrated**: Already using GitHub for code
 - **Flexible**: YAML configuration, huge marketplace
 - **Fast**: Parallel jobs, caching
 
 **Workflows**:
+
 - **CI**: Lint, type-check, test, build (on every PR)
 - **Security**: Snyk scan, secret detection (on push)
 - **Deploy**: Vercel deployment (on merge to main)
@@ -649,20 +692,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Industry standard**: Best error tracking available
 - **Source maps**: Show original TypeScript code in errors
 - **Performance monitoring**: APM for backend
 - **Free tier**: 5K errors/mo (sufficient for MVP)
 
 **Integration**:
+
 ```typescript
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
   tracesSampleRate: 0.1,
-});
+})
 ```
 
 ---
@@ -672,6 +717,7 @@ Sentry.init({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Open source**: Can self-host if needed
 - **Product analytics**: User behavior, funnels, retention
 - **Feature flags**: A/B testing, gradual rollouts
@@ -679,6 +725,7 @@ Sentry.init({
 - **Free tier**: 1M events/mo
 
 **Events Tracked**:
+
 - User signup, login
 - Project created, deployed
 - Feature usage (code generation, security scan)
@@ -700,25 +747,25 @@ Sentry.init({
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Developer-friendly**: Modern API, excellent DX
 - **React Email**: Type-safe, beautiful email templates
 - **Reliable**: Built by former Postmark team
 - **Free tier**: 100 emails/day, 3K/mo
 
 **Email Templates** (React Email):
+
 ```tsx
-import { Html, Button } from '@react-email/components';
+import { Html, Button } from '@react-email/components'
 
 export function WelcomeEmail({ name }: { name: string }) {
   return (
     <Html>
       <h1>Welcome to ShipSensei, {name}!</h1>
       <p>Let's build your first project.</p>
-      <Button href="https://shipsensei.dev/projects/new">
-        Start building
-      </Button>
+      <Button href="https://shipsensei.dev/projects/new">Start building</Button>
     </Html>
-  );
+  )
 }
 ```
 
@@ -738,6 +785,7 @@ export function WelcomeEmail({ name }: { name: string }) {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Industry standard**: Trusted by users
 - **Excellent docs**: Best-in-class developer experience
 - **Subscription support**: Built-in recurring billing
@@ -745,6 +793,7 @@ export function WelcomeEmail({ name }: { name: string }) {
 - **PCI compliance**: Handled by Stripe
 
 **Pricing**:
+
 - 2.9% + 30¢ per transaction
 - No monthly fees
 
@@ -759,6 +808,7 @@ export function WelcomeEmail({ name }: { name: string }) {
 **Decision**: ✅ CHOSEN
 
 **Rationale**:
+
 - **Fast**: 2x faster than npm, hard links instead of copying
 - **Disk efficient**: Single store for all dependencies
 - **Strict**: Better dependency resolution than npm/yarn
@@ -773,11 +823,13 @@ export function WelcomeEmail({ name }: { name: string }) {
 **Decision**: ✅ CHOSEN
 
 **ESLint**:
+
 - Next.js config (`eslint-config-next`)
 - TypeScript rules (`@typescript-eslint`)
 - Accessibility rules (`eslint-plugin-jsx-a11y`)
 
 **Prettier**:
+
 - Automatic formatting (on save)
 - Pre-commit hook (Husky + lint-staged)
 
@@ -790,6 +842,7 @@ export function WelcomeEmail({ name }: { name: string }) {
 **Purpose**: Run linting, type-checking, tests before commit
 
 **Configuration**:
+
 ```json
 {
   "lint-staged": {
@@ -896,31 +949,32 @@ RESEND_API_KEY="re_..."
 
 ## Technology Decision Matrix
 
-| Category | Choice | Confidence | Risk |
-|----------|--------|------------|------|
-| Frontend Framework | Next.js 14 | 🟢 High | Low |
-| Language | TypeScript | 🟢 High | Low |
-| Styling | Tailwind CSS | 🟢 High | Low |
-| Component Library | shadcn/ui | 🟢 High | Low |
-| State Management | Zustand | 🟢 High | Low |
-| Backend | Next.js API Routes | 🟢 High | Low |
-| Database | PostgreSQL (Neon) | 🟢 High | Low |
-| ORM | Prisma | 🟢 High | Low |
-| Cache | Upstash Redis | 🟢 High | Low |
-| File Storage | Cloudflare R2 | 🟡 Medium | Low |
-| Primary LLM | Anthropic Claude | 🟢 High | Medium* |
-| Secondary LLM | OpenAI GPT-4 | 🟢 High | Medium* |
-| Auth | NextAuth.js v5 | 🟡 Medium | Medium** |
-| Hosting | Vercel | 🟢 High | Low |
-| CI/CD | GitHub Actions | 🟢 High | Low |
-| Error Tracking | Sentry | 🟢 High | Low |
-| Analytics | PostHog | 🟢 High | Low |
-| Email | Resend | 🟢 High | Low |
-| Payments | Stripe | 🟢 High | Low |
+| Category           | Choice             | Confidence | Risk       |
+| ------------------ | ------------------ | ---------- | ---------- |
+| Frontend Framework | Next.js 14         | 🟢 High    | Low        |
+| Language           | TypeScript         | 🟢 High    | Low        |
+| Styling            | Tailwind CSS       | 🟢 High    | Low        |
+| Component Library  | shadcn/ui          | 🟢 High    | Low        |
+| State Management   | Zustand            | 🟢 High    | Low        |
+| Backend            | Next.js API Routes | 🟢 High    | Low        |
+| Database           | PostgreSQL (Neon)  | 🟢 High    | Low        |
+| ORM                | Prisma             | 🟢 High    | Low        |
+| Cache              | Upstash Redis      | 🟢 High    | Low        |
+| File Storage       | Cloudflare R2      | 🟡 Medium  | Low        |
+| Primary LLM        | Anthropic Claude   | 🟢 High    | Medium\*   |
+| Secondary LLM      | OpenAI GPT-4       | 🟢 High    | Medium\*   |
+| Auth               | NextAuth.js v5     | 🟡 Medium  | Medium\*\* |
+| Hosting            | Vercel             | 🟢 High    | Low        |
+| CI/CD              | GitHub Actions     | 🟢 High    | Low        |
+| Error Tracking     | Sentry             | 🟢 High    | Low        |
+| Analytics          | PostHog            | 🟢 High    | Low        |
+| Email              | Resend             | 🟢 High    | Low        |
+| Payments           | Stripe             | 🟢 High    | Low        |
 
 **Risk Notes**:
-- *LLM Risk: API costs could spiral, quality variations. **Mitigation**: Caching, fallbacks, budget alerts.
-- **NextAuth Risk: v5 is beta. **Mitigation**: Well-tested beta, stable API, large community.
+
+- \*LLM Risk: API costs could spiral, quality variations. **Mitigation**: Caching, fallbacks, budget alerts.
+- **NextAuth Risk: v5 is beta. **Mitigation\*\*: Well-tested beta, stable API, large community.
 
 ---
 
@@ -929,20 +983,28 @@ RESEND_API_KEY="re_..."
 ### LLM Provider Flexibility
 
 **Abstraction Layer**:
+
 ```typescript
 // lib/ai/client.ts
 interface LLMProvider {
-  generateCompletion(prompt: string, options: CompletionOptions): Promise<string>;
-  streamCompletion(prompt: string, options: CompletionOptions): ReadableStream;
+  generateCompletion(
+    prompt: string,
+    options: CompletionOptions
+  ): Promise<string>
+  streamCompletion(prompt: string, options: CompletionOptions): ReadableStream
 }
 
-class AnthropicProvider implements LLMProvider { /* ... */ }
-class OpenAIProvider implements LLMProvider { /* ... */ }
+class AnthropicProvider implements LLMProvider {
+  /* ... */
+}
+class OpenAIProvider implements LLMProvider {
+  /* ... */
+}
 
 export function getLLMProvider(task: AITask): LLMProvider {
   // Route based on task type, costs, availability
-  if (task === 'code') return new OpenAIProvider();
-  return new AnthropicProvider();
+  if (task === 'code') return new OpenAIProvider()
+  return new AnthropicProvider()
 }
 ```
 
@@ -955,6 +1017,7 @@ export function getLLMProvider(task: AITask): LLMProvider {
 **Current**: Neon (serverless Postgres)
 
 **Growth Path** (if needed):
+
 1. **Neon Pro**: More compute, storage, connections
 2. **Supabase Pro**: If we need built-in realtime/auth
 3. **Self-hosted Postgres**: For enterprise, full control
@@ -968,6 +1031,7 @@ export function getLLMProvider(task: AITask): LLMProvider {
 **Current**: Vercel
 
 **Alternatives** (if needed):
+
 - **Cloudflare Pages**: Cheaper at scale, excellent performance
 - **Self-hosted**: Docker + Kubernetes for complete control
 - **Railway**: For full-stack with database included
@@ -1034,6 +1098,7 @@ vercel deploy --prod
 ## Conclusion
 
 This tech stack is optimized for:
+
 - **Speed**: Fast development, fast deployment, fast iteration
 - **Quality**: Type safety, automated testing, security scanning
 - **Cost**: Generous free tiers, serverless economics
@@ -1045,6 +1110,7 @@ This tech stack is optimized for:
 **Confidence**: 🟢 High - All technologies are battle-tested, production-proven
 
 **Next Steps**:
+
 1. Setup local development environment
 2. Initialize project with chosen stack
 3. Build proof of concept (requirements wizard)
