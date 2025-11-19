@@ -1,0 +1,8 @@
+.DS_Store
+*.tgz
+.env*
+node_modules/
+*.log
+coverage/
+.nyc_output/
+.create-quality-automation-cache/
