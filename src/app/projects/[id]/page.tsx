@@ -49,6 +49,8 @@ export default function ProjectDetailPage({
   const [generatingStack, setGeneratingStack] = useState(false)
   const [generatingProject, setGeneratingProject] = useState(false)
   const [repositoryUrl, setRepositoryUrl] = useState<string | null>(null)
+  const [deploying, setDeploying] = useState(false)
+  const [deploymentUrl, setDeploymentUrl] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -102,6 +104,11 @@ export default function ProjectDetailPage({
       // Check if repository exists
       if (data.project.repository) {
         setRepositoryUrl(data.project.repository)
+      }
+
+      // Check if deployment exists
+      if (data.project.deployment) {
+        setDeploymentUrl(data.project.deployment)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
@@ -229,6 +236,57 @@ export default function ProjectDetailPage({
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setGeneratingProject(false)
+    }
+  }
+
+  const deployProject = async () => {
+    if (!projectId) return
+
+    // Prompt for Vercel token
+    const vercelToken = prompt(
+      'Enter your Vercel API Token:\n\n' +
+        'You can create one at: https://vercel.com/account/tokens\n\n' +
+        'Required scopes: deployments:write, projects:write'
+    )
+
+    if (!vercelToken || !vercelToken.trim()) {
+      return
+    }
+
+    try {
+      setDeploying(true)
+      setError(null)
+
+      const response = await fetch(`/api/projects/${projectId}/deploy`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vercelToken: vercelToken.trim() }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to deploy project')
+      }
+
+      const data = await response.json()
+      setDeploymentUrl(data.deployment.url)
+
+      // Show success message
+      alert(
+        `Deployment started!\n\n` +
+          `Your project is being deployed to:\n${data.deployment.url}\n\n` +
+          `Status: ${data.deployment.status}\n\n` +
+          `This may take 2-5 minutes. You can visit the URL to check progress.`
+      )
+
+      // Refresh project to get updated status
+      setTimeout(() => {
+        fetchProject()
+      }, 3000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setDeploying(false)
     }
   }
 
@@ -474,17 +532,37 @@ export default function ProjectDetailPage({
                     <p className="text-gray-700 mb-6">
                       {recommendation.rationale}
                     </p>
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-4">
                       {repositoryUrl ? (
                         <>
                           <a
                             href={repositoryUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                            className="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition"
                           >
                             View on GitHub →
                           </a>
+                          {deploymentUrl ? (
+                            <a
+                              href={deploymentUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
+                            >
+                              View Live Site →
+                            </a>
+                          ) : (
+                            <button
+                              onClick={deployProject}
+                              disabled={deploying}
+                              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {deploying
+                                ? 'Deploying to Vercel...'
+                                : 'Deploy to Vercel'}
+                            </button>
+                          )}
                           <button
                             onClick={() => router.push('/dashboard')}
                             className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"

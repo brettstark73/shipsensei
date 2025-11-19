@@ -25,6 +25,7 @@
     "@auth/prisma-adapter": "^2.11.1",
     "@octokit/rest": "^22.0.1",
     "@prisma/client": "^7.0.0",
+    "@vercel/client": "^17.2.6",
     "ai": "^5.0.97",
     "next": "14.2.18",
     "next-auth": "^4.24.13",
