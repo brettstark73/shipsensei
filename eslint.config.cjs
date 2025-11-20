@@ -79,6 +79,16 @@ configs.push({
   },
 })
 
+// Add Jest globals for test files
+configs.push({
+  files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
+  languageOptions: {
+    globals: {
+      ...globals.jest,
+    },
+  },
+})
+
 if (tsPlugin && tsParser) {
   configs.push({
     files: ['**/*.{ts,tsx}'],
