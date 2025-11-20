@@ -187,7 +187,7 @@ describe('Rate Limit Utility', () => {
 
   describe('Edge cases', () => {
     it('should handle rapid sequential requests', () => {
-      const identifier = 'user123'
+      const identifier = `unique-${Date.now()}-rapid`
       const config = { maxRequests: 100, interval: 60000 }
 
       const results = []
