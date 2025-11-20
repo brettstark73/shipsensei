@@ -13,10 +13,7 @@ import { getToken } from 'next-auth/jwt'
  */
 
 // Simple in-memory rate limiter for Edge runtime
-const rateLimitStore = new Map<
-  string,
-  { count: number; resetTime: number }
->()
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
 
 function rateLimit(identifier: string, limit: number, windowMs: number) {
   const now = Date.now()

@@ -8,9 +8,7 @@ import { z } from 'zod'
 const updateProjectSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
-  status: z
-    .enum(['draft', 'generating', 'ready', 'deployed'])
-    .optional(),
+  status: z.enum(['draft', 'generating', 'ready', 'deployed']).optional(),
   techStack: z.string().optional(),
   repository: z.string().url().optional(),
   deployment: z.string().url().optional(),
@@ -21,18 +19,12 @@ type RouteContext = {
 }
 
 // GET /api/projects/[id] - Get a specific project
-export async function GET(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { id } = await context.params
@@ -52,10 +44,7 @@ export async function GET(
     })
 
     if (!project) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
     return NextResponse.json({ project })
@@ -69,18 +58,12 @@ export async function GET(
 }
 
 // PUT /api/projects/[id] - Update a project
-export async function PUT(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function PUT(request: NextRequest, context: RouteContext) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { id } = await context.params
@@ -104,10 +87,7 @@ export async function PUT(
     })
 
     if (!existingProject) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
     // Update project
@@ -136,18 +116,12 @@ export async function PUT(
 }
 
 // DELETE /api/projects/[id] - Delete a project
-export async function DELETE(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { id } = await context.params
@@ -161,10 +135,7 @@ export async function DELETE(
     })
 
     if (!existingProject) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
     // Delete project (requirements will be cascade deleted)

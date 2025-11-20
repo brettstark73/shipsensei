@@ -467,7 +467,7 @@ describe('POST /api/projects/[id]/requirements (bulk)', () => {
     expect(response.status).toBe(201)
     expect(data.requirements).toHaveLength(3)
     expect(mockCreateMany).toHaveBeenCalledWith({
-      data: requirementsData.map((req) => ({
+      data: requirementsData.map(req => ({
         ...req,
         projectId,
       })),

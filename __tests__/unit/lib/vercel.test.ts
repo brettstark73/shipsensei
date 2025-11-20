@@ -352,11 +352,7 @@ describe('Vercel Service', () => {
       } as Response)
 
       const maxWait = 100
-      const promise = waitForDeployment(
-        'test-token',
-        'deployment-123',
-        maxWait
-      )
+      const promise = waitForDeployment('test-token', 'deployment-123', maxWait)
 
       jest.runAllTimers()
 

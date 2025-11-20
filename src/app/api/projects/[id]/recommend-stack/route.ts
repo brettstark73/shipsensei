@@ -39,7 +39,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     // Check if there are answered requirements
-    const answeredRequirements = project.requirements.filter((r) => r.answer)
+    const answeredRequirements = project.requirements.filter(r => r.answer)
 
     if (answeredRequirements.length === 0) {
       return NextResponse.json(
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // Generate recommendation
     const recommendation = await generateTechStackRecommendation(
       project.name,
-      answeredRequirements.map((r) => ({
+      answeredRequirements.map(r => ({
         question: r.question,
         answer: r.answer!,
       }))

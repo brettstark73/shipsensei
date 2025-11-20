@@ -88,7 +88,6 @@ describe('ProjectDetailPage', () => {
         data: { user: { id: 'user123' } },
         status: 'authenticated',
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
@@ -164,7 +163,7 @@ describe('ProjectDetailPage', () => {
     it('should show loading spinner while fetching', async () => {
       ;(global.fetch as jest.Mock).mockImplementation(
         () =>
-          new Promise((resolve) =>
+          new Promise(resolve =>
             setTimeout(
               () =>
                 resolve({
@@ -183,9 +182,7 @@ describe('ProjectDetailPage', () => {
       jest.advanceTimersByTime(100)
 
       await waitFor(() => {
-        expect(
-          screen.queryByText('Loading project...')
-        ).not.toBeInTheDocument()
+        expect(screen.queryByText('Loading project...')).not.toBeInTheDocument()
       })
     })
   })
@@ -385,7 +382,7 @@ describe('ProjectDetailPage', () => {
         })
         .mockImplementation(
           () =>
-            new Promise((resolve) =>
+            new Promise(resolve =>
               setTimeout(
                 () =>
                   resolve({
@@ -692,7 +689,9 @@ describe('ProjectDetailPage', () => {
         const textarea = screen.getByPlaceholderText(
           /Type your answer... \(Press Enter to send/i
         )
-        fireEvent.change(textarea, { target: { value: 'A recipe sharing app' } })
+        fireEvent.change(textarea, {
+          target: { value: 'A recipe sharing app' },
+        })
       })
 
       const sendButton = screen.getByText('Send')
@@ -741,7 +740,9 @@ describe('ProjectDetailPage', () => {
         const textarea = screen.getByPlaceholderText(
           /Type your answer... \(Press Enter to send/i
         )
-        fireEvent.change(textarea, { target: { value: 'A recipe sharing app' } })
+        fireEvent.change(textarea, {
+          target: { value: 'A recipe sharing app' },
+        })
         fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false })
       })
 
@@ -773,7 +774,9 @@ describe('ProjectDetailPage', () => {
         const textarea = screen.getByPlaceholderText(
           /Type your answer... \(Press Enter to send/i
         )
-        fireEvent.change(textarea, { target: { value: 'A recipe sharing app' } })
+        fireEvent.change(textarea, {
+          target: { value: 'A recipe sharing app' },
+        })
         fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true })
       })
 
@@ -789,7 +792,7 @@ describe('ProjectDetailPage', () => {
         })
         .mockImplementation(
           () =>
-            new Promise((resolve) =>
+            new Promise(resolve =>
               setTimeout(
                 () =>
                   resolve({
@@ -817,7 +820,9 @@ describe('ProjectDetailPage', () => {
         const textarea = screen.getByPlaceholderText(
           /Type your answer... \(Press Enter to send/i
         )
-        fireEvent.change(textarea, { target: { value: 'A recipe sharing app' } })
+        fireEvent.change(textarea, {
+          target: { value: 'A recipe sharing app' },
+        })
       })
 
       const sendButton = screen.getByText('Send')
@@ -859,7 +864,9 @@ describe('ProjectDetailPage', () => {
         const textarea = screen.getByPlaceholderText(
           /Type your answer... \(Press Enter to send/i
         ) as HTMLTextAreaElement
-        fireEvent.change(textarea, { target: { value: 'A recipe sharing app' } })
+        fireEvent.change(textarea, {
+          target: { value: 'A recipe sharing app' },
+        })
 
         expect(textarea.value).toBe('A recipe sharing app')
 
@@ -920,7 +927,9 @@ describe('ProjectDetailPage', () => {
         const textarea = screen.getByPlaceholderText(
           /Type your answer... \(Press Enter to send/i
         )
-        fireEvent.change(textarea, { target: { value: 'A recipe sharing app' } })
+        fireEvent.change(textarea, {
+          target: { value: 'A recipe sharing app' },
+        })
       })
 
       const sendButton = screen.getByText('Send')
@@ -1103,9 +1112,7 @@ describe('ProjectDetailPage', () => {
     it('should show completion message when all questions answered', async () => {
       const completedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
       }
 
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -1124,9 +1131,7 @@ describe('ProjectDetailPage', () => {
     it('should show tech stack recommendation button when completed', async () => {
       const completedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
       }
 
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -1146,9 +1151,7 @@ describe('ProjectDetailPage', () => {
     it('should generate tech stack recommendation when button clicked', async () => {
       const completedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
       }
 
       ;(global.fetch as jest.Mock)
@@ -1194,9 +1197,7 @@ describe('ProjectDetailPage', () => {
     it('should display tech stack recommendation', async () => {
       const projectWithStack = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
         techStack: JSON.stringify({
           stack: 'Next.js + Tailwind CSS + Prisma',
           rationale: 'Great for your use case',
@@ -1223,9 +1224,7 @@ describe('ProjectDetailPage', () => {
     it('should show "Generating..." while generating stack', async () => {
       const completedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
       }
 
       ;(global.fetch as jest.Mock)
@@ -1235,7 +1234,7 @@ describe('ProjectDetailPage', () => {
         })
         .mockImplementation(
           () =>
-            new Promise((resolve) =>
+            new Promise(resolve =>
               setTimeout(
                 () =>
                   resolve({
@@ -1272,9 +1271,7 @@ describe('ProjectDetailPage', () => {
     it('should handle error when generating stack fails', async () => {
       const completedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
       }
 
       ;(global.fetch as jest.Mock)
@@ -1429,7 +1426,7 @@ describe('ProjectDetailPage', () => {
         })
         .mockImplementation(
           () =>
-            new Promise((resolve) =>
+            new Promise(resolve =>
               setTimeout(
                 () =>
                   resolve({
@@ -1529,7 +1526,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('vercel-token-123')
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -1558,7 +1554,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('vercel-token-123')
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -1594,7 +1589,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue(null)
 
       render(<ProjectDetailPage params={createMockParams('project123')} />)
@@ -1613,7 +1607,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('vercel-token-123')
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -1662,11 +1655,10 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('vercel-token-123')
       ;(global.fetch as jest.Mock).mockImplementation(
         () =>
-          new Promise((resolve) =>
+          new Promise(resolve =>
             setTimeout(
               () =>
                 resolve({
@@ -1706,7 +1698,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('vercel-token-123')
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
@@ -1730,7 +1721,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('  vercel-token-123  ')
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -1764,7 +1754,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('vercel-token-123')
       ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
@@ -1833,9 +1822,7 @@ describe('ProjectDetailPage', () => {
     it('should navigate to dashboard from tech stack section', async () => {
       const projectWithStack = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
         techStack: JSON.stringify({
           stack: 'Next.js + Tailwind CSS + Prisma',
           rationale: 'Great for your use case',
@@ -1861,9 +1848,7 @@ describe('ProjectDetailPage', () => {
     it('should open GitHub link in new tab', async () => {
       const generatedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
         techStack: JSON.stringify({
           stack: 'Next.js + Tailwind CSS + Prisma',
           rationale: 'Great for your use case',
@@ -1888,9 +1873,7 @@ describe('ProjectDetailPage', () => {
     it('should open live site link in new tab', async () => {
       const deployedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
         techStack: JSON.stringify({
           stack: 'Next.js + Tailwind CSS + Prisma',
           rationale: 'Great for your use case',
@@ -1925,7 +1908,9 @@ describe('ProjectDetailPage', () => {
     it('should display draft status with correct styling', async () => {
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ project: { ...mockProjectBase, status: 'draft' } }),
+        json: async () => ({
+          project: { ...mockProjectBase, status: 'draft' },
+        }),
       })
 
       render(<ProjectDetailPage params={createMockParams('project123')} />)
@@ -2015,9 +2000,7 @@ describe('ProjectDetailPage', () => {
     it('should handle invalid JSON in tech stack', async () => {
       const projectInvalidStack = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
         techStack: 'invalid json',
       }
 
@@ -2040,9 +2023,7 @@ describe('ProjectDetailPage', () => {
     it('should handle empty Vercel token input', async () => {
       const generatedProject = {
         ...mockProjectBase,
-        requirements: [
-          { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-        ],
+        requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
         techStack: JSON.stringify({
           stack: 'Next.js + Tailwind CSS + Prisma',
           rationale: 'Great for your use case',
@@ -2054,7 +2035,6 @@ describe('ProjectDetailPage', () => {
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
-
       ;(global.prompt as jest.Mock).mockReturnValue('   ')
 
       render(<ProjectDetailPage params={createMockParams('project123')} />)
@@ -2130,7 +2110,6 @@ describe('ProjectDetailPage', () => {
         data: { user: { id: 'user123' } },
         status: 'authenticated',
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: null }),

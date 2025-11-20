@@ -84,25 +84,22 @@ export async function deployToVercel(
 
   // Trigger deployment using Git Deploy webhook
   // This triggers Vercel to pull from GitHub and deploy
-  const response = await fetch(
-    `https://api.vercel.com/v13/deployments`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${vercelToken}`,
-        'Content-Type': 'application/json',
+  const response = await fetch(`https://api.vercel.com/v13/deployments`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${vercelToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: projectName,
+      gitSource: {
+        type: 'github',
+        repo: githubRepo,
+        ref: 'main', // or 'master'
       },
-      body: JSON.stringify({
-        name: projectName,
-        gitSource: {
-          type: 'github',
-          repo: githubRepo,
-          ref: 'main', // or 'master'
-        },
-        target: production ? 'production' : 'preview',
-      }),
-    }
-  )
+      target: production ? 'production' : 'preview',
+    }),
+  })
 
   if (!response.ok) {
     const error = await response.json()
@@ -161,7 +158,7 @@ export async function waitForDeployment(
     }
 
     // Wait 5 seconds before checking again
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, 5000))
   }
 
   throw new Error('Deployment timed out')

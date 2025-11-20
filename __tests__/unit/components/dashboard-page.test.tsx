@@ -39,9 +39,7 @@ const mockProjects = [
     deployment: null,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-02T00:00:00Z',
-    requirements: [
-      { id: 'req1', question: 'Q1', answer: 'A1', order: 0 },
-    ],
+    requirements: [{ id: 'req1', question: 'Q1', answer: 'A1', order: 0 }],
   },
   {
     id: 'project2',
@@ -446,7 +444,7 @@ describe('Dashboard Page', () => {
       ;(global.confirm as jest.Mock).mockReturnValue(true)
       ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
-          new Promise((resolve) => {
+          new Promise(resolve => {
             setTimeout(
               () =>
                 resolve({
@@ -475,7 +473,7 @@ describe('Dashboard Page', () => {
       ;(global.confirm as jest.Mock).mockReturnValue(true)
       ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
-          new Promise((resolve) => {
+          new Promise(resolve => {
             setTimeout(
               () =>
                 resolve({

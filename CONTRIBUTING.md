@@ -7,6 +7,7 @@ Thank you for your interest in contributing to ShipSensei! We're building in pub
 ### Reporting Bugs
 
 Found a bug? Please open an issue with:
+
 - Clear title and description
 - Steps to reproduce
 - Expected vs. actual behavior
@@ -16,6 +17,7 @@ Found a bug? Please open an issue with:
 ### Suggesting Features
 
 Have an idea? Open an issue with:
+
 - Clear description of the feature
 - Use case (why is this valuable?)
 - Proposed implementation (optional)
@@ -72,6 +74,7 @@ pnpm dev
 ## Commit Guidelines
 
 Use conventional commits:
+
 - `feat: Add requirements wizard`
 - `fix: Resolve deployment timeout`
 - `docs: Update architecture documentation`

@@ -10,16 +10,16 @@ jest.mock('@/lib/ai', () => ({
   },
 }))
 
-const mockAnthropicCreate =
-  anthropic.messages.create as jest.MockedFunction<
-    typeof anthropic.messages.create
-  >
+const mockAnthropicCreate = anthropic.messages.create as jest.MockedFunction<
+  typeof anthropic.messages.create
+>
 
 describe('Project Generator', () => {
   describe('generateProjectTemplate', () => {
     it('should generate complete project template with AI-generated content', async () => {
       const mockReadme = '# Test Project\n\nGenerated README content'
-      const mockHomePage = 'export default function Home() { return <div>Home</div> }'
+      const mockHomePage =
+        'export default function Home() { return <div>Home</div> }'
 
       // Mock README generation
       mockAnthropicCreate.mockResolvedValueOnce({
@@ -62,7 +62,7 @@ describe('Project Generator', () => {
       expect(result.files.length).toBeGreaterThan(0)
 
       // Check for essential files
-      const fileNames = result.files.map((f) => f.path)
+      const fileNames = result.files.map(f => f.path)
       expect(fileNames).toContain('package.json')
       expect(fileNames).toContain('tsconfig.json')
       expect(fileNames).toContain('next.config.js')
@@ -76,11 +76,11 @@ describe('Project Generator', () => {
       expect(fileNames).toContain('.env.example')
 
       // Check README content
-      const readmeFile = result.files.find((f) => f.path === 'README.md')
+      const readmeFile = result.files.find(f => f.path === 'README.md')
       expect(readmeFile?.content).toBe(mockReadme)
 
       // Check home page content
-      const homePageFile = result.files.find((f) => f.path === 'src/app/page.tsx')
+      const homePageFile = result.files.find(f => f.path === 'src/app/page.tsx')
       expect(homePageFile?.content).toBe(mockHomePage)
     })
 
@@ -105,12 +105,12 @@ describe('Project Generator', () => {
       expect(result.files.length).toBeGreaterThan(0)
 
       // Check that fallback README is used
-      const readmeFile = result.files.find((f) => f.path === 'README.md')
+      const readmeFile = result.files.find(f => f.path === 'README.md')
       expect(readmeFile?.content).toContain('# Fallback Project')
       expect(readmeFile?.content).toContain('Getting Started')
 
       // Check that fallback home page is used
-      const homePageFile = result.files.find((f) => f.path === 'src/app/page.tsx')
+      const homePageFile = result.files.find(f => f.path === 'src/app/page.tsx')
       expect(homePageFile?.content).toContain('export default function Home()')
       expect(homePageFile?.content).toContain('Fallback Project')
     })
@@ -131,7 +131,7 @@ describe('Project Generator', () => {
         []
       )
 
-      const packageJsonFile = result.files.find((f) => f.path === 'package.json')
+      const packageJsonFile = result.files.find(f => f.path === 'package.json')
       const packageJson = JSON.parse(packageJsonFile?.content || '{}')
 
       expect(packageJson.name).toBe('my-test-project-with-spaces')
@@ -157,10 +157,12 @@ describe('Project Generator', () => {
         []
       )
 
-      const layoutFile = result.files.find((f) => f.path === 'src/app/layout.tsx')
+      const layoutFile = result.files.find(f => f.path === 'src/app/layout.tsx')
 
       expect(layoutFile?.content).toContain(`title: '${projectName}'`)
-      expect(layoutFile?.content).toContain(`description: '${projectDescription}'`)
+      expect(layoutFile?.content).toContain(
+        `description: '${projectDescription}'`
+      )
     })
 
     it('should generate valid package.json with all required fields', async () => {
@@ -175,7 +177,7 @@ describe('Project Generator', () => {
 
       const result = await generateProjectTemplate('Test', 'Description', [])
 
-      const packageJsonFile = result.files.find((f) => f.path === 'package.json')
+      const packageJsonFile = result.files.find(f => f.path === 'package.json')
       const packageJson = JSON.parse(packageJsonFile?.content || '{}')
 
       // Check required fields
@@ -211,7 +213,7 @@ describe('Project Generator', () => {
 
       const result = await generateProjectTemplate('Test', 'Description', [])
 
-      const tsconfigFile = result.files.find((f) => f.path === 'tsconfig.json')
+      const tsconfigFile = result.files.find(f => f.path === 'tsconfig.json')
       const tsconfig = JSON.parse(tsconfigFile?.content || '{}')
 
       expect(tsconfig.compilerOptions).toBeDefined()
@@ -232,7 +234,7 @@ describe('Project Generator', () => {
 
       const result = await generateProjectTemplate('Test', 'Description', [])
 
-      const gitignoreFile = result.files.find((f) => f.path === '.gitignore')
+      const gitignoreFile = result.files.find(f => f.path === '.gitignore')
 
       expect(gitignoreFile?.content).toContain('/node_modules')
       expect(gitignoreFile?.content).toContain('/.next/')
@@ -254,7 +256,7 @@ describe('Project Generator', () => {
       const result = await generateProjectTemplate('Test', 'Description', [])
 
       const globalsCssFile = result.files.find(
-        (f) => f.path === 'src/app/globals.css'
+        f => f.path === 'src/app/globals.css'
       )
 
       expect(globalsCssFile?.content).toContain('@tailwind base;')
@@ -263,7 +265,8 @@ describe('Project Generator', () => {
     })
 
     it('should strip markdown code fences from home page', async () => {
-      const codeWithFences = '```tsx\nexport default function Home() { return <div>Test</div> }\n```'
+      const codeWithFences =
+        '```tsx\nexport default function Home() { return <div>Test</div> }\n```'
 
       mockAnthropicCreate
         .mockResolvedValueOnce({
@@ -275,7 +278,7 @@ describe('Project Generator', () => {
 
       const result = await generateProjectTemplate('Test', 'Description', [])
 
-      const homePageFile = result.files.find((f) => f.path === 'src/app/page.tsx')
+      const homePageFile = result.files.find(f => f.path === 'src/app/page.tsx')
 
       expect(homePageFile?.content).not.toContain('```')
       expect(homePageFile?.content).toContain('export default function Home()')

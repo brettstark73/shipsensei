@@ -25,9 +25,8 @@ const { getServerSession } = require('next-auth')
 const mockGetServerSession = getServerSession as jest.MockedFunction<
   typeof getServerSession
 >
-const mockPrismaProjectFindMany = prisma.project.findMany as jest.MockedFunction<
-  typeof prisma.project.findMany
->
+const mockPrismaProjectFindMany = prisma.project
+  .findMany as jest.MockedFunction<typeof prisma.project.findMany>
 const mockPrismaProjectCreate = prisma.project.create as jest.MockedFunction<
   typeof prisma.project.create
 >

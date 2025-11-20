@@ -54,7 +54,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     // Check if requirements are completed
-    const answeredRequirements = project.requirements.filter((r) => r.answer)
+    const answeredRequirements = project.requirements.filter(r => r.answer)
 
     if (answeredRequirements.length === 0) {
       return NextResponse.json(
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       const template = await generateProjectTemplate(
         project.name,
         project.description || '',
-        answeredRequirements.map((r) => ({
+        answeredRequirements.map(r => ({
           question: r.question,
           answer: r.answer!,
         }))

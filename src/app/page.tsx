@@ -106,8 +106,8 @@ export default function Home() {
               AI Requirements Discovery
             </h4>
             <p className="text-gray-600">
-              Chat with Claude to refine your idea through intelligent Q&A.
-              Get clear requirements in minutes.
+              Chat with Claude to refine your idea through intelligent Q&A. Get
+              clear requirements in minutes.
             </p>
           </div>
 
@@ -158,8 +158,8 @@ export default function Home() {
               Auto-Generate Project
             </h4>
             <p className="text-gray-600">
-              AI creates a complete Next.js app customized to your
-              requirements. Code pushed to GitHub automatically.
+              AI creates a complete Next.js app customized to your requirements.
+              Code pushed to GitHub automatically.
             </p>
           </div>
 
@@ -271,9 +271,7 @@ export default function Home() {
               <div className="text-5xl font-bold text-gray-900 mb-2">
                 &lt; 30min
               </div>
-              <p className="text-lg text-gray-700">
-                From idea to live product
-              </p>
+              <p className="text-lg text-gray-700">From idea to live product</p>
             </div>
           </div>
         </div>

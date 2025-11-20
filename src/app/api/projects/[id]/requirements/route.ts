@@ -19,18 +19,12 @@ type RouteContext = {
 }
 
 // GET /api/projects/[id]/requirements - Get all requirements for a project
-export async function GET(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { id: projectId } = await context.params
@@ -44,10 +38,7 @@ export async function GET(
     })
 
     if (!project) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
     const requirements = await prisma.requirement.findMany({
@@ -70,18 +61,12 @@ export async function GET(
 }
 
 // POST /api/projects/[id]/requirements - Create requirement(s)
-export async function POST(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function POST(request: NextRequest, context: RouteContext) {
   try {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { id: projectId } = await context.params
@@ -96,10 +81,7 @@ export async function POST(
     })
 
     if (!project) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
     // Check if it's bulk creation (array) or single creation
@@ -115,7 +97,7 @@ export async function POST(
         )
       }
 
-      const requirementsData = validation.data.map((req) => ({
+      const requirementsData = validation.data.map(req => ({
         ...req,
         projectId,
       }))

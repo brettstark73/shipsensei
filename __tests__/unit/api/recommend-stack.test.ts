@@ -135,8 +135,16 @@ describe('POST /api/projects/[id]/recommend-stack', () => {
       name: 'E-commerce App',
       userId,
       requirements: [
-        { id: 'req1', question: 'What are you building?', answer: 'An online store' },
-        { id: 'req2', question: 'Who is your audience?', answer: 'Small businesses' },
+        {
+          id: 'req1',
+          question: 'What are you building?',
+          answer: 'An online store',
+        },
+        {
+          id: 'req2',
+          question: 'Who is your audience?',
+          answer: 'Small businesses',
+        },
       ],
     }
 
@@ -164,13 +172,10 @@ describe('POST /api/projects/[id]/recommend-stack', () => {
 
     expect(response.status).toBe(200)
     expect(data.recommendation).toEqual(mockRecommendation)
-    expect(mockGenerateTechStack).toHaveBeenCalledWith(
-      'E-commerce App',
-      [
-        { question: 'What are you building?', answer: 'An online store' },
-        { question: 'Who is your audience?', answer: 'Small businesses' },
-      ]
-    )
+    expect(mockGenerateTechStack).toHaveBeenCalledWith('E-commerce App', [
+      { question: 'What are you building?', answer: 'An online store' },
+      { question: 'Who is your audience?', answer: 'Small businesses' },
+    ])
   })
 
   it('should update project status to ready', async () => {
@@ -273,13 +278,10 @@ describe('POST /api/projects/[id]/recommend-stack', () => {
 
     await POST(mockRequest, context)
 
-    expect(mockGenerateTechStack).toHaveBeenCalledWith(
-      'Test',
-      [
-        { question: 'Q1', answer: 'A1' },
-        { question: 'Q3', answer: 'A3' },
-      ]
-    )
+    expect(mockGenerateTechStack).toHaveBeenCalledWith('Test', [
+      { question: 'Q1', answer: 'A1' },
+      { question: 'Q3', answer: 'A3' },
+    ])
   })
 
   it('should return 500 on database error', async () => {

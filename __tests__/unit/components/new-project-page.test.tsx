@@ -141,7 +141,9 @@ describe('New Project Page', () => {
     it('should render cancel button', () => {
       render(<NewProjectPage />)
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /Cancel/i })
+      ).toBeInTheDocument()
     })
 
     it('should render create button', () => {
@@ -164,7 +166,9 @@ describe('New Project Page', () => {
     it('should update name input when typing', () => {
       render(<NewProjectPage />)
 
-      const nameInput = screen.getByLabelText(/Project Name/i) as HTMLInputElement
+      const nameInput = screen.getByLabelText(
+        /Project Name/i
+      ) as HTMLInputElement
       fireEvent.change(nameInput, { target: { value: 'My Project' } })
 
       expect(nameInput.value).toBe('My Project')
@@ -271,7 +275,8 @@ describe('New Project Page', () => {
     it('should show error when submitting without name', async () => {
       render(<NewProjectPage />)
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -294,7 +299,8 @@ describe('New Project Page', () => {
       fireEvent.change(nameInput, { target: { value: 'Test Project' } })
       fireEvent.change(descInput, { target: { value: 'Test description' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -323,7 +329,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'New Project' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -346,7 +353,8 @@ describe('New Project Page', () => {
       fireEvent.change(nameInput, { target: { value: '  Trimmed Name  ' } })
       fireEvent.change(descInput, { target: { value: '  Trimmed Desc  ' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -374,7 +382,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Project Name' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -402,7 +411,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Test' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -422,7 +432,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Test' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -441,7 +452,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Test' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -462,7 +474,7 @@ describe('New Project Page', () => {
     it('should show loading text in submit button when submitting', async () => {
       ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
-          new Promise((resolve) => {
+          new Promise(resolve => {
             setTimeout(
               () =>
                 resolve({
@@ -492,7 +504,7 @@ describe('New Project Page', () => {
     it('should disable inputs when submitting', async () => {
       ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
-          new Promise((resolve) => {
+          new Promise(resolve => {
             setTimeout(
               () =>
                 resolve({
@@ -509,7 +521,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Test' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -522,7 +535,7 @@ describe('New Project Page', () => {
     it('should disable buttons when submitting', async () => {
       ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
-          new Promise((resolve) => {
+          new Promise(resolve => {
             setTimeout(
               () =>
                 resolve({
@@ -539,12 +552,15 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Test' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /Creating.../i })).toBeDisabled()
+        expect(
+          screen.getByRole('button', { name: /Creating.../i })
+        ).toBeDisabled()
         expect(screen.getByRole('button', { name: /Cancel/i })).toBeDisabled()
       })
     })
@@ -560,7 +576,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Test' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
       fireEvent.submit(form)
 
@@ -604,7 +621,8 @@ describe('New Project Page', () => {
       const nameInput = screen.getByLabelText(/Project Name/i)
       fireEvent.change(nameInput, { target: { value: 'Test' } })
 
-      const form = screen.getByRole('button', { name: /Create Project/i })
+      const form = screen
+        .getByRole('button', { name: /Create Project/i })
         .closest('form')!
 
       // First submission - error

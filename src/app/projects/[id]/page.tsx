@@ -54,7 +54,7 @@ export default function ProjectDetailPage({
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    params.then((p) => setProjectId(p.id))
+    params.then(p => setProjectId(p.id))
   }, [params])
 
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function ProjectDetailPage({
       }
 
       const data = await response.json()
-      setProject((prev) =>
+      setProject(prev =>
         prev ? { ...prev, requirements: data.requirements } : null
       )
       setChatStarted(true)
@@ -164,7 +164,7 @@ export default function ProjectDetailPage({
       }
 
       const data = await response.json()
-      setProject((prev) =>
+      setProject(prev =>
         prev ? { ...prev, requirements: data.requirements } : null
       )
       setCurrentAnswer('')
@@ -322,9 +322,9 @@ export default function ProjectDetailPage({
 
   if (!project) return null
 
-  const currentQuestion = project.requirements.find((r) => !r.answer)
-  const answeredCount = project.requirements.filter((r) => r.answer).length
-  const allAnswered = project.requirements.every((r) => r.answer)
+  const currentQuestion = project.requirements.find(r => !r.answer)
+  const answeredCount = project.requirements.filter(r => r.answer).length
+  const allAnswered = project.requirements.every(r => r.answer)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -369,10 +369,7 @@ export default function ProjectDetailPage({
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error}
-            <button
-              onClick={() => setError(null)}
-              className="ml-4 underline"
-            >
+            <button onClick={() => setError(null)} className="ml-4 underline">
               Dismiss
             </button>
           </div>
@@ -388,9 +385,9 @@ export default function ProjectDetailPage({
                 Let's Discover Your Requirements
               </h2>
               <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                I'll ask you 5-10 smart questions to understand what you want
-                to build. This helps us recommend the right tech stack and
-                generate a project that fits your needs.
+                I'll ask you 5-10 smart questions to understand what you want to
+                build. This helps us recommend the right tech stack and generate
+                a project that fits your needs.
               </p>
               <button
                 onClick={startChat}
@@ -460,8 +457,8 @@ export default function ProjectDetailPage({
                       <div className="mt-4">
                         <textarea
                           value={currentAnswer}
-                          onChange={(e) => setCurrentAnswer(e.target.value)}
-                          onKeyDown={(e) => {
+                          onChange={e => setCurrentAnswer(e.target.value)}
+                          onKeyDown={e => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                               e.preventDefault()
                               submitAnswer(req.id)
