@@ -5,20 +5,13 @@ import {
 } from '@/lib/ai'
 import Anthropic from '@anthropic-ai/sdk'
 
-// Mock the Anthropic SDK
+// Mock the Anthropic SDK (using manual mock from __mocks__)
 jest.mock('@anthropic-ai/sdk')
 
-const mockAnthropicCreate = jest.fn()
+const mockAnthropicCreate = (Anthropic as typeof Anthropic & { mockCreate: jest.Mock }).mockCreate
 
 beforeEach(() => {
-  ;(Anthropic as jest.MockedClass<typeof Anthropic>).mockImplementation(
-    () =>
-      ({
-        messages: {
-          create: mockAnthropicCreate,
-        },
-      }) as unknown as Anthropic
-  )
+  jest.clearAllMocks()
 })
 
 describe('AI Service', () => {

@@ -1,10 +1,16 @@
 import { GET, POST } from '@/app/api/projects/route'
-import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
 import { NextRequest } from 'next/server'
 
 // Mock dependencies
-jest.mock('next-auth')
+jest.mock('next-auth', () => ({
+  getServerSession: jest.fn(),
+}))
+
+jest.mock('@/lib/auth.config', () => ({
+  authOptions: {},
+}))
+
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     project: {
@@ -13,6 +19,8 @@ jest.mock('@/lib/prisma', () => ({
     },
   },
 }))
+
+const { getServerSession } = require('next-auth')
 
 const mockGetServerSession = getServerSession as jest.MockedFunction<
   typeof getServerSession

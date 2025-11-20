@@ -43,19 +43,20 @@ Example: ["Who is your target user?", "What's the main problem you're solving?"]
     throw new Error('Unexpected response type from Claude')
   }
 
+  const fallbackQuestions = [
+    'Who is your target user or audience?',
+    "What's the main problem you're trying to solve?",
+    'What are the 3 most important features for your MVP?',
+    'Do you have any design or branding preferences?',
+    'Are there any existing apps or websites similar to what you want?',
+  ]
+
   try {
     const questions = JSON.parse(content.text)
-    return Array.isArray(questions) ? questions : []
+    return Array.isArray(questions) ? questions : fallbackQuestions
   } catch (error) {
     console.error('Failed to parse questions from Claude:', error)
-    // Fallback questions
-    return [
-      'Who is your target user or audience?',
-      "What's the main problem you're trying to solve?",
-      'What are the 3 most important features for your MVP?',
-      'Do you have any design or branding preferences?',
-      'Are there any existing apps or websites similar to what you want?',
-    ]
+    return fallbackQuestions
   }
 }
 

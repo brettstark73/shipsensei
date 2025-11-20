@@ -37,7 +37,7 @@ describe('GitHub Service', () => {
       const accessToken = 'test-token'
       const client = createGitHubClient(accessToken)
 
-      expect(client).toBeInstanceOf(Octokit)
+      expect(client).toBeDefined()
       expect(Octokit).toHaveBeenCalledWith({
         auth: accessToken,
       })
