@@ -52,7 +52,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     // Extract GitHub repo name from URL
     // e.g., "https://github.com/owner/repo" -> "owner/repo"
-    const repoMatch = project.repository.match(/github\.com\/([^\/]+\/[^\/]+)/)
+    const repoMatch = project.repository.match(/github\.com\/([^/]+\/[^/]+)/)
     if (!repoMatch) {
       return NextResponse.json(
         { error: 'Invalid repository URL' },

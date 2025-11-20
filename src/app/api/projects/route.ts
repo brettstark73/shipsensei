@@ -11,7 +11,7 @@ const createProjectSchema = z.object({
 })
 
 // GET /api/projects - Get all projects for authenticated user
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions)
 

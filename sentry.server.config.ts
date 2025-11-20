@@ -30,7 +30,8 @@ if (SENTRY_DSN) {
       'OAuthCallbackError',
     ],
 
-    beforeSend(event, hint) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    beforeSend(event, _hint) {
       // Filter out errors from bots/crawlers
       const userAgent = event.request?.headers?.['user-agent']
       if (userAgent && /bot|crawler|spider/i.test(userAgent)) {

@@ -19,7 +19,13 @@ try {
 
 const configs = [
   {
-    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.next/**',
+      '**/coverage/**',
+    ],
   },
   js.configs.recommended,
 ]

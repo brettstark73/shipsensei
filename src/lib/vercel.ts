@@ -39,8 +39,6 @@ export async function createOrGetVercelProject(
   }
 
   // Create new project if it doesn't exist
-  const [owner, repo] = githubRepo.split('/')
-
   const createResponse = await fetch('https://api.vercel.com/v10/projects', {
     method: 'POST',
     headers: {

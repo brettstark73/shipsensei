@@ -276,7 +276,9 @@ Return ONLY the React component code, no explanation.`
     const content = response.content[0]
     if (content.type === 'text') {
       // Extract code from potential markdown code blocks
+      // eslint-disable-next-line security/detect-unsafe-regex
       const code = content.text
+        // eslint-disable-next-line security/detect-unsafe-regex
         .replace(/```(?:tsx?|jsx?|typescript|javascript)?\n?/g, '')
         .replace(/```$/g, '')
         .trim()

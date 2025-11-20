@@ -43,7 +43,6 @@ export default function ProjectDetailPage({
   const [chatStarted, setChatStarted] = useState(false)
   const [currentAnswer, setCurrentAnswer] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [showRecommendation, setShowRecommendation] = useState(false)
   const [recommendation, setRecommendation] =
     useState<TechStackRecommendation | null>(null)
   const [generatingStack, setGeneratingStack] = useState(false)
@@ -95,8 +94,7 @@ export default function ProjectDetailPage({
       if (data.project.techStack) {
         try {
           setRecommendation(JSON.parse(data.project.techStack))
-          setShowRecommendation(true)
-        } catch (e) {
+        } catch {
           // Ignore parse errors
         }
       }
@@ -169,10 +167,7 @@ export default function ProjectDetailPage({
       )
       setCurrentAnswer('')
 
-      // If chat is completed, show recommendation option
-      if (data.completed) {
-        setShowRecommendation(true)
-      }
+      // Chat completion is handled by checking if all requirements are answered
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -424,7 +419,7 @@ export default function ProjectDetailPage({
             {/* Chat Messages */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-h-[600px] overflow-y-auto">
               <div className="space-y-6">
-                {project.requirements.map((req, index) => (
+                {project.requirements.map(req => (
                   <div key={req.id}>
                     {/* Question from AI */}
                     <div className="flex items-start mb-4">

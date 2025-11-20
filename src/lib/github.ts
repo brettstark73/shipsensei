@@ -65,7 +65,7 @@ export async function createOrUpdateFile(
     if ('sha' in existingFile) {
       sha = existingFile.sha
     }
-  } catch (error) {
+  } catch {
     // File doesn't exist, which is fine for creation
   }
 
