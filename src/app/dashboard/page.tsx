@@ -79,7 +79,7 @@ export default function DashboardPage() {
       }
 
       // Remove project from UI
-      setProjects((prev) => prev.filter((p) => p.id !== projectId))
+      setProjects(prev => prev.filter(p => p.id !== projectId))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -175,11 +175,9 @@ export default function DashboardPage() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Deployed
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Deployed</p>
                   <p className="text-3xl font-bold text-gray-900 mt-2">
-                    {projects.filter((p) => p.status === 'deployed').length}
+                    {projects.filter(p => p.status === 'deployed').length}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -203,11 +201,9 @@ export default function DashboardPage() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    On GitHub
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">On GitHub</p>
                   <p className="text-3xl font-bold text-gray-900 mt-2">
-                    {projects.filter((p) => p.repository).length}
+                    {projects.filter(p => p.repository).length}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -231,7 +227,7 @@ export default function DashboardPage() {
                   <p className="text-3xl font-bold text-gray-900 mt-2">
                     {
                       projects.filter(
-                        (p) =>
+                        p =>
                           p.status === 'draft' ||
                           p.status === 'generating' ||
                           p.status === 'ready'
@@ -282,7 +278,7 @@ export default function DashboardPage() {
         {/* Projects grid */}
         {projects.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {projects.map(project => (
               <div
                 key={project.id}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition relative"
@@ -300,35 +296,35 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                {project.description && (
-                  <p className="text-gray-600 mb-4 line-clamp-2">
-                    {project.description}
-                  </p>
-                )}
+                  {project.description && (
+                    <p className="text-gray-600 mb-4 line-clamp-2">
+                      {project.description}
+                    </p>
+                  )}
 
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center text-gray-500">
-                    <span className="font-medium mr-2">Requirements:</span>
-                    <span>
-                      {project.requirements.length} question
-                      {project.requirements.length !== 1 ? 's' : ''}
-                    </span>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center text-gray-500">
+                      <span className="font-medium mr-2">Requirements:</span>
+                      <span>
+                        {project.requirements.length} question
+                        {project.requirements.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    {project.repository && (
+                      <div className="flex items-center text-gray-500">
+                        <span className="mr-2">📦</span>
+                        <span className="truncate">Repository linked</span>
+                      </div>
+                    )}
+
+                    {project.deployment && (
+                      <div className="flex items-center text-gray-500">
+                        <span className="mr-2">🌐</span>
+                        <span className="truncate">Deployed</span>
+                      </div>
+                    )}
                   </div>
-
-                  {project.repository && (
-                    <div className="flex items-center text-gray-500">
-                      <span className="mr-2">📦</span>
-                      <span className="truncate">Repository linked</span>
-                    </div>
-                  )}
-
-                  {project.deployment && (
-                    <div className="flex items-center text-gray-500">
-                      <span className="mr-2">🌐</span>
-                      <span className="truncate">Deployed</span>
-                    </div>
-                  )}
-                </div>
 
                   <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-400">
                     Updated {new Date(project.updatedAt).toLocaleDateString()}
@@ -337,7 +333,7 @@ export default function DashboardPage() {
 
                 {/* Delete button */}
                 <button
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation()
                     deleteProject(project.id, project.name)
                   }}

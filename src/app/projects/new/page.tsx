@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
@@ -71,8 +71,7 @@ export default function NewProjectPage() {
             Create New Project
           </h1>
           <p className="text-gray-600 mt-2">
-            Tell us about your project idea and we'll guide you through the
-            rest
+            Tell us about your project idea and we'll guide you through the rest
           </p>
         </div>
 
@@ -91,7 +90,7 @@ export default function NewProjectPage() {
                 type="text"
                 id="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
                 placeholder="e.g., Recipe Sharing App"
                 maxLength={100}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
@@ -113,7 +112,7 @@ export default function NewProjectPage() {
               <textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 placeholder="What problem does your project solve? Who is it for?"
                 maxLength={500}
                 rows={4}
@@ -139,9 +138,7 @@ export default function NewProjectPage() {
               </h3>
               <ul className="text-sm text-blue-800 space-y-1">
                 <li>📝 We'll ask you 5-10 smart questions about your idea</li>
-                <li>
-                  🛠️ You'll get an opinionated tech stack recommendation
-                </li>
+                <li>🛠️ You'll get an opinionated tech stack recommendation</li>
                 <li>⚡ We'll generate a working Next.js project</li>
                 <li>🚀 One-click deploy to get your product live</li>
               </ul>
@@ -177,12 +174,10 @@ export default function NewProjectPage() {
               students" is better than "social app"
             </li>
             <li>
-              • <strong>Think user-first:</strong> What problem are you
-              solving?
+              • <strong>Think user-first:</strong> What problem are you solving?
             </li>
             <li>
-              • <strong>Start simple:</strong> You can always add features
-              later
+              • <strong>Start simple:</strong> You can always add features later
             </li>
           </ul>
         </div>

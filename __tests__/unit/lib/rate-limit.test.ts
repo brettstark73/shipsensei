@@ -92,7 +92,7 @@ describe('Rate Limit Utility', () => {
       expect(limited.limited).toBe(true)
 
       // Wait for window to expire
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         setTimeout(() => {
           const result = checkRateLimit(identifier, config)
           expect(result.limited).toBe(false)
@@ -158,7 +158,7 @@ describe('Rate Limit Utility', () => {
       checkRateLimit(identifier, config)
 
       // Wait for expiry
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         setTimeout(() => {
           cleanupRateLimitStore()
 
@@ -231,9 +231,9 @@ describe('Rate Limit Utility', () => {
         Promise.resolve(checkRateLimit(identifier, config)),
       ])
 
-      return results.then((res) => {
+      return results.then(res => {
         expect(res).toHaveLength(3)
-        res.forEach((r) => {
+        res.forEach(r => {
           expect(r.limited).toBe(false)
         })
       })
@@ -248,7 +248,7 @@ describe('Rate Limit Utility', () => {
         'user.789',
       ]
 
-      specialIdentifiers.forEach((id) => {
+      specialIdentifiers.forEach(id => {
         const result = checkRateLimit(id, RATE_LIMITS.API)
         expect(result.limited).toBe(false)
         expect(result.remaining).toBeGreaterThanOrEqual(0)

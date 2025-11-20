@@ -58,13 +58,13 @@ npm run test:ci
 
 ### Service Layer Coverage (lib/)
 
-| File | Statements | Branches | Functions | Lines |
-|------|-----------|----------|-----------|-------|
-| **ai.ts** | 100% | 95% | 100% | 100% |
-| **github.ts** | 100% | 100% | 100% | 100% |
-| **project-generator.ts** | 100% | 100% | 100% | 100% |
-| **vercel.ts** | 96% | 86% | 100% | 96% |
-| **Overall lib/** | **77%** | **91%** | **92%** | **77%** |
+| File                     | Statements | Branches | Functions | Lines   |
+| ------------------------ | ---------- | -------- | --------- | ------- |
+| **ai.ts**                | 100%       | 95%      | 100%      | 100%    |
+| **github.ts**            | 100%       | 100%     | 100%      | 100%    |
+| **project-generator.ts** | 100%       | 100%     | 100%      | 100%    |
+| **vercel.ts**            | 96%        | 86%      | 100%      | 96%     |
+| **Overall lib/**         | **77%**    | **91%**  | **92%**   | **77%** |
 
 ### Coverage Thresholds
 
@@ -158,11 +158,13 @@ Tests for Next.js project template generation:
 Tests for /api/projects endpoint:
 
 **GET /api/projects:**
+
 - ✅ Return projects for authenticated user
 - ✅ Return 401 for unauthenticated requests
 - ✅ Handle database errors gracefully
 
 **POST /api/projects:**
+
 - ✅ Create project with valid data
 - ✅ Create project without description
 - ✅ Return 401 for unauthenticated requests
@@ -333,6 +335,7 @@ These manual mocks ensure tests can run without loading the actual ES modules, w
 ### GitHub Actions
 
 Tests run automatically on:
+
 - Push to main, master, develop branches
 - Pull requests
 
@@ -343,6 +346,7 @@ npm run test:ci
 ```
 
 Runs tests with:
+
 - CI mode enabled
 - Coverage collection
 - Limited workers (2) for stability
@@ -408,15 +412,15 @@ Runs tests with:
 
 ### Coverage Achieved
 
-| Category | Statements | Branches | Functions | Lines | Status |
-|----------|-----------|----------|-----------|-------|--------|
-| **AI Service** | 100% | 95% | 100% | 100% | ✅ |
-| **GitHub Service** | 100% | 100% | 100% | 100% | ✅ |
-| **Project Generator** | 100% | 100% | 100% | 100% | ✅ |
-| **Vercel Service** | 96% | 86% | 100% | 96% | ✅ |
-| **Overall lib/** | **77%** | **91%** | **92%** | **77%** | ✅ |
-| API Routes | 0% | 0% | 0% | 0% | ⏳ Next |
-| Components | 0% | 0% | 0% | 0% | ⏳ Next |
+| Category              | Statements | Branches | Functions | Lines   | Status  |
+| --------------------- | ---------- | -------- | --------- | ------- | ------- |
+| **AI Service**        | 100%       | 95%      | 100%      | 100%    | ✅      |
+| **GitHub Service**    | 100%       | 100%     | 100%      | 100%    | ✅      |
+| **Project Generator** | 100%       | 100%     | 100%      | 100%    | ✅      |
+| **Vercel Service**    | 96%        | 86%      | 100%      | 96%     | ✅      |
+| **Overall lib/**      | **77%**    | **91%**  | **92%**   | **77%** | ✅      |
+| API Routes            | 0%         | 0%       | 0%        | 0%      | ⏳ Next |
+| Components            | 0%         | 0%       | 0%        | 0%      | ⏳ Next |
 
 ## Resources
 

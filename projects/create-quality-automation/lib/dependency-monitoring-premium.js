@@ -491,7 +491,7 @@ function parsePyprojectToml(pyprojectPath) {
 
       // Parse: package>=1.0.0 or package[extra]>=1.0.0
       // Support dotted names, hyphens, underscores, and extras
-       
+
       const match = depString.match(
         /^([\w.-]+)(\[[\w,\s-]+\])?([><=!~]+)?(.*)$/
       )
@@ -524,7 +524,6 @@ function parsePyprojectToml(pyprojectPath) {
       while ((pkgMatch = packagePattern.exec(depList)) !== null) {
         const depString = pkgMatch[1].trim()
 
-         
         const match = depString.match(
           /^([\w.-]+)(\[[\w,\s-]+\])?([><=!~]+)?(.*)$/
         )

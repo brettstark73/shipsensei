@@ -40,10 +40,12 @@ Before deploying to production, ensure you have:
 **IMPORTANT**: Vercel serverless functions require connection pooling.
 
 Neon provides two connection strings:
+
 - **Direct connection**: `postgresql://...` (for migrations)
 - **Pooled connection**: `postgresql://...?pgbouncer=true` (for application)
 
 **In production, use:**
+
 - `DATABASE_URL` = Pooled connection (for Prisma queries)
 - `DIRECT_DATABASE_URL` = Direct connection (for migrations)
 
@@ -135,6 +137,7 @@ jobs:
 ### Migration Best Practices
 
 ✅ **DO:**
+
 - Test migrations on staging database first
 - Back up database before migrations
 - Use `prisma migrate deploy` (not `prisma migrate dev`)
@@ -142,6 +145,7 @@ jobs:
 - Review generated SQL before deploying
 
 ❌ **DON'T:**
+
 - Run migrations from pooled connection
 - Skip testing migrations
 - Make breaking schema changes without code changes
@@ -319,11 +323,13 @@ vercel logs --follow api/projects
 ### Sentry Monitoring
 
 Monitor these metrics:
+
 - Error rate (should be < 1%)
 - Response time (p95 should be < 500ms)
 - Availability (should be > 99.9%)
 
 Set up alerts:
+
 - Error spike (> 10 errors/min)
 - Performance degradation (p95 > 2s)
 - Health check failures
@@ -331,12 +337,14 @@ Set up alerts:
 ### Database Monitoring
 
 Neon dashboard shows:
+
 - Connection count
 - Query performance
 - Storage usage
 - Active queries
 
 **Set alerts for:**
+
 - Connection pool exhaustion (> 80% used)
 - Slow queries (> 1s)
 - Storage usage (> 80% capacity)
@@ -438,21 +446,25 @@ Before deploying to production:
 ### Common Issues
 
 **1. "Cannot connect to database"**
+
 - Check `DATABASE_URL` ends with `?pgbouncer=true`
 - Verify IP whitelist in Neon (should allow all)
 - Check Neon database is not paused
 
 **2. "NextAuth.js error"**
+
 - Verify `NEXTAUTH_URL` matches production URL
 - Check OAuth redirect URLs in GitHub/Google
 - Ensure `NEXTAUTH_SECRET` is set
 
 **3. "Rate limit store not working across instances"**
+
 - Current implementation is in-memory
 - For production, upgrade to Upstash Redis
 - See `src/middleware.ts` for implementation
 
 **4. "Migrations failing"**
+
 - Use `DIRECT_DATABASE_URL` (not pooled)
 - Check migration SQL in `prisma/migrations`
 - Test on staging first

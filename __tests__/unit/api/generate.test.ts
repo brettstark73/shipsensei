@@ -116,9 +116,7 @@ describe('POST /api/projects/[id]/generate', () => {
       id: 'project123',
       name: 'Test',
       userId: 'user123',
-      requirements: [
-        { id: 'req1', question: 'Q1', answer: null },
-      ],
+      requirements: [{ id: 'req1', question: 'Q1', answer: null }],
     })
 
     const mockRequest = {} as NextRequest
@@ -141,9 +139,7 @@ describe('POST /api/projects/[id]/generate', () => {
       name: 'Test',
       userId: 'user123',
       techStack: null, // Missing
-      requirements: [
-        { id: 'req1', question: 'Q1', answer: 'A1' },
-      ],
+      requirements: [{ id: 'req1', question: 'Q1', answer: 'A1' }],
     })
 
     const mockRequest = {} as NextRequest
@@ -163,9 +159,7 @@ describe('POST /api/projects/[id]/generate', () => {
       description: 'A great app',
       userId: 'user123',
       techStack: '{"stack":"Next.js"}',
-      requirements: [
-        { id: 'req1', question: 'What?', answer: 'An app' },
-      ],
+      requirements: [{ id: 'req1', question: 'What?', answer: 'An app' }],
     }
 
     const mockRepo = {
@@ -366,14 +360,10 @@ describe('POST /api/projects/[id]/generate', () => {
 
     await POST(mockRequest, context)
 
-    expect(mockGenerateTemplate).toHaveBeenCalledWith(
-      'Test',
-      '',
-      [
-        { question: 'Q1', answer: 'A1' },
-        { question: 'Q3', answer: 'A3' },
-      ]
-    )
+    expect(mockGenerateTemplate).toHaveBeenCalledWith('Test', '', [
+      { question: 'Q1', answer: 'A1' },
+      { question: 'Q3', answer: 'A3' },
+    ])
   })
 
   it('should create files in GitHub repository', async () => {

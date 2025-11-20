@@ -63,9 +63,7 @@ describe('Home Page (Landing)', () => {
     it('should display "Start Building Free" button in hero', () => {
       render(<Home />)
 
-      expect(
-        screen.getByText('Start Building Free →')
-      ).toBeInTheDocument()
+      expect(screen.getByText('Start Building Free →')).toBeInTheDocument()
     })
 
     it('should show no credit card message when unauthenticated', () => {
@@ -265,9 +263,7 @@ describe('Home Page (Landing)', () => {
       const { container } = render(<Home />)
 
       // Features grid should have multiple cards
-      const featureCards = container.querySelectorAll(
-        '.bg-white.rounded-xl'
-      )
+      const featureCards = container.querySelectorAll('.bg-white.rounded-xl')
       expect(featureCards.length).toBeGreaterThanOrEqual(4)
     })
   })
@@ -286,7 +282,7 @@ describe('Home Page (Landing)', () => {
       const buttons = screen.getAllByRole('button')
       expect(buttons.length).toBeGreaterThan(0)
 
-      buttons.forEach((button) => {
+      buttons.forEach(button => {
         expect(button).toBeEnabled()
       })
     })
@@ -359,7 +355,7 @@ describe('Home Page (Landing)', () => {
       render(<Home />)
 
       const buttons = screen.getAllByRole('button')
-      buttons.forEach((button) => {
+      buttons.forEach(button => {
         expect(button.tagName).toBe('BUTTON')
       })
     })

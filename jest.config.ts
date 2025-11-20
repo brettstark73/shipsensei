@@ -20,10 +20,7 @@ const config: Config = {
   },
 
   // Test patterns
-  testMatch: [
-    '**/__tests__/**/*.test.ts',
-    '**/__tests__/**/*.test.tsx',
-  ],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
 
   // Coverage configuration
   collectCoverageFrom: [

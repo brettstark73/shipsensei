@@ -11,6 +11,7 @@ This document provides AI assistants with comprehensive information about the Sh
 **Current Status**: Early Development / MVP Foundation (Week 1)
 
 ### Business Model
+
 - **FREE**: 1 active project, community support, deploy to free tier
 - **PRO** ($19/mo): 5 projects, priority support, custom domains
 - **TEAM** ($49/mo): Unlimited projects, team collaboration, white-label
@@ -59,17 +60,20 @@ shipsensei/
 ## Tech Stack
 
 ### Core Technologies
+
 - **Framework**: Next.js 14.2.18 (App Router)
 - **Language**: TypeScript 5+ (strict mode enabled)
 - **Runtime**: Node.js 20.11.1 (via Volta)
 - **Package Manager**: npm (10.2.4)
 
 ### Frontend
+
 - **UI Library**: React 18.3.1
 - **Styling**: Tailwind CSS 3.4.1
 - **Component Library**: shadcn/ui (planned)
 
 ### Backend
+
 - **Database**: PostgreSQL (Neon Serverless)
 - **ORM**: Prisma 7.0.0
 - **Authentication**: NextAuth.js 4.24.13
@@ -78,11 +82,13 @@ shipsensei/
   - Adapter: Prisma Adapter
 
 ### AI/LLM
+
 - **Primary**: Anthropic Claude (best reasoning)
 - **Fallback**: OpenAI GPT-4
 - **Use Cases**: Requirements discovery, tech stack recommendations, code generation
 
 ### Development Tools
+
 - **Linting**: ESLint 8 with TypeScript support
 - **Formatting**: Prettier 3.3.3
 - **CSS Linting**: Stylelint 16.8.0
@@ -90,12 +96,14 @@ shipsensei/
 - **Performance**: Lighthouse CI (@lhci/cli 0.14.0)
 
 ### Deployment & Infrastructure
+
 - **Hosting**: Vercel (zero-config)
 - **Database**: Neon (serverless Postgres)
 - **CDN**: Vercel Edge Network
 - **SSL**: Automatic via Vercel
 
 ### Future Additions (Not Yet Implemented)
+
 - **Caching**: Upstash Redis
 - **Storage**: Cloudflare R2
 - **Monitoring**: Sentry (error tracking), PostHog (analytics)
@@ -105,6 +113,7 @@ shipsensei/
 ## Database Schema
 
 ### Authentication Models (NextAuth.js)
+
 ```prisma
 User
 ├── id: String (cuid)
@@ -124,6 +133,7 @@ VerificationToken (email verification)
 ```
 
 ### ShipSensei Models
+
 ```prisma
 Project
 ├── id: String (cuid)
@@ -153,6 +163,7 @@ Requirement
 ## Development Workflows
 
 ### Initial Setup
+
 ```bash
 # Clone repository
 git clone https://github.com/YOUR_USERNAME/shipsensei.git
@@ -173,6 +184,7 @@ npm run dev
 ```
 
 ### Available Scripts
+
 ```bash
 npm run dev              # Start development server (localhost:3000)
 npm run build            # Build production bundle
@@ -197,6 +209,7 @@ npm run lighthouse:upload  # Upload Lighthouse results
 ```
 
 ### Git Workflow
+
 1. **Feature Branches**: Create from `main` with descriptive names
 2. **Commits**: Use conventional commit messages:
    - `feat:` - New features
@@ -213,9 +226,11 @@ npm run lighthouse:upload  # Upload Lighthouse results
 4. **CI/CD**: GitHub Actions runs on push/PR (quality.yml)
 
 ### CI/CD Pipeline (.github/workflows/quality.yml)
+
 Runs on: `push` and `pull_request` to `main`, `master`, `develop`
 
 **Quality Checks:**
+
 1. Dependency integrity verification
 2. Prettier formatting check
 3. ESLint (max warnings: 0)
@@ -229,6 +244,7 @@ Runs on: `push` and `pull_request` to `main`, `master`, `develop`
 11. Lighthouse CI (performance)
 
 **Security Patterns Detected:**
+
 - `innerHTML` with template literal interpolation
 - `eval()` with interpolation
 - `document.write()` with interpolation
@@ -239,6 +255,7 @@ Runs on: `push` and `pull_request` to `main`, `master`, `develop`
 ## Code Conventions
 
 ### TypeScript
+
 - **Strict Mode**: Enabled (`strict: true`)
 - **Path Aliases**: `@/*` → `./src/*`
 - **File Extensions**: `.ts` for modules, `.tsx` for React components
@@ -246,6 +263,7 @@ Runs on: `push` and `pull_request` to `main`, `master`, `develop`
 - **No `any`**: Use `unknown` or proper types
 
 ### React/Next.js Patterns
+
 ```typescript
 // Server Components (default in App Router)
 export default function Page() {
@@ -269,6 +287,7 @@ export async function GET(request: NextRequest) {
 ```
 
 ### Authentication Patterns
+
 ```typescript
 // Protect API routes
 import { getServerSession } from 'next-auth'
@@ -284,8 +303,8 @@ export async function POST(request: NextRequest) {
   const project = await prisma.project.findUnique({
     where: {
       id: projectId,
-      userId: session.user.id  // CRITICAL: Prevent unauthorized access
-    }
+      userId: session.user.id, // CRITICAL: Prevent unauthorized access
+    },
   })
 
   return NextResponse.json({ project })
@@ -293,6 +312,7 @@ export async function POST(request: NextRequest) {
 ```
 
 ### Database Access
+
 ```typescript
 // Use Prisma client singleton (src/lib/prisma.ts)
 import { prisma } from '@/lib/prisma'
@@ -300,25 +320,27 @@ import { prisma } from '@/lib/prisma'
 // Always use prepared statements (Prisma handles this)
 const projects = await prisma.project.findMany({
   where: { userId: session.user.id },
-  include: { requirements: true }
+  include: { requirements: true },
 })
 
 // Use transactions for related operations
 await prisma.$transaction([
   prisma.project.create({ data: projectData }),
-  prisma.requirement.createMany({ data: requirementsData })
+  prisma.requirement.createMany({ data: requirementsData }),
 ])
 ```
 
 ### Security Best Practices
 
 #### Input Validation
+
 - **Use Zod schemas** for all API inputs
 - **Validate string lengths** (prevent DoS)
 - **Sanitize user inputs** before storage
 - **Never trust client data**
 
 #### XSS Prevention
+
 - ❌ **NEVER use** `dangerouslySetInnerHTML`
 - ❌ **NEVER use** `eval()` with user input
 - ❌ **NEVER use** `innerHTML` with interpolation
@@ -326,6 +348,7 @@ await prisma.$transaction([
 - ✅ **Use** DOMPurify if HTML rendering required
 
 #### Authentication & Authorization
+
 - ✅ **OAuth only** (no password storage)
 - ✅ **httpOnly cookies** (prevent XSS token theft)
 - ✅ **Check session** on every API route
@@ -333,6 +356,7 @@ await prisma.$transaction([
 - ✅ **HTTPS only** (Vercel enforces)
 
 #### Secrets Management
+
 - ✅ **Environment variables** for all secrets
 - ✅ **Never commit** `.env` or `.env.local`
 - ✅ **Use `.env.example`** as template
@@ -340,23 +364,27 @@ await prisma.$transaction([
 - ❌ **Never hardcode** credentials in code
 
 #### Rate Limiting (Planned)
+
 - Max 100 API requests/min per user
 - Max 10 AI generations/min
 - Max 5 deployments/hour
 
 ### Styling Conventions
+
 - **Tailwind Utility Classes**: Prefer utility classes over custom CSS
 - **Component Composition**: Use Tailwind's composition patterns
 - **Responsive Design**: Mobile-first approach
 - **Dark Mode**: Will use Tailwind's dark mode utilities
 
 ### File Naming
+
 - **Components**: PascalCase (e.g., `UserProfile.tsx`)
 - **Utilities**: camelCase (e.g., `formatDate.ts`)
 - **API Routes**: kebab-case (e.g., `user-projects.ts`)
 - **Types**: PascalCase (e.g., `UserTypes.ts`)
 
 ### Code Organization
+
 ```
 src/
 ├── app/              # Routes and pages
@@ -370,6 +398,7 @@ src/
 ## Common Tasks
 
 ### Adding a New API Route
+
 1. Create file in `src/app/api/[route]/route.ts`
 2. Implement HTTP methods (GET, POST, PUT, DELETE)
 3. Add authentication check with `getServerSession()`
@@ -378,6 +407,7 @@ src/
 6. Return JSON responses with proper status codes
 
 ### Adding a New Page
+
 1. Create file in `src/app/[route]/page.tsx`
 2. Use Server Component by default
 3. Add `'use client'` only if interactive state needed
@@ -385,6 +415,7 @@ src/
 5. Add metadata with Next.js `Metadata` API
 
 ### Adding a New Database Model
+
 1. Update `prisma/schema.prisma`
 2. Add relations to existing models
 3. Run `npx prisma migrate dev --name descriptive_name`
@@ -392,6 +423,7 @@ src/
 5. Run `npx prisma generate` to update client
 
 ### Running Database Migrations
+
 ```bash
 # Development migration
 npx prisma migrate dev --name migration_description
@@ -410,6 +442,7 @@ npx prisma studio
 ```
 
 ### Adding Environment Variables
+
 1. Add to `.env.example` with placeholder
 2. Add to `.env.local` with actual value
 3. Add to Vercel environment variables
@@ -417,6 +450,7 @@ npx prisma studio
 5. Never commit `.env.local`
 
 ### Debugging
+
 ```bash
 # View server logs
 npm run dev  # Check terminal output
@@ -434,12 +468,14 @@ npm run build
 ## Important Files & Configurations
 
 ### TypeScript Configuration (tsconfig.json)
+
 - **Strict mode**: Enabled
 - **Path aliases**: `@/*` maps to `./src/*`
 - **JSX**: Preserve (Next.js handles transformation)
 - **Module resolution**: Bundler mode
 
 ### ESLint Configuration (eslint.config.cjs)
+
 - **Base**: ESLint 9 flat config
 - **Security Plugin**: `eslint-plugin-security`
 - **Key Rules**:
@@ -450,6 +486,7 @@ npm run build
   - `security/detect-unsafe-regex`: error
 
 ### Prettier Configuration (.prettierrc)
+
 ```json
 {
   "semi": false,
@@ -461,6 +498,7 @@ npm run build
 ```
 
 ### Husky + lint-staged
+
 - **Pre-commit hook**: Runs lint-staged
 - **Staged files**: Auto-fix linting, format with Prettier
 - **Prevents commits**: If linting/formatting fails
@@ -468,25 +506,30 @@ npm run build
 ## MVP Roadmap (Current Focus)
 
 ### Week 1-2: Requirements Chat ✓ (Foundation Complete)
+
 - Database schema designed
 - Authentication implemented
 - Project scaffolding complete
 
 ### Week 2: Tech Stack Picker (Next)
+
 - Build recommendation engine
 - One opinionated stack: Next.js + Tailwind + Prisma + Neon + Vercel
 
 ### Week 3: Project Generator
+
 - Template-based generation
 - AI customization layer
 - GitHub repository creation
 
 ### Week 3-4: One-Click Deploy
+
 - Vercel integration
 - Environment variable setup
 - Return live URL
 
 ### Week 4: Landing Page
+
 - Goal: 500 waitlist signups
 - Problem/solution presentation
 - Demo video
@@ -495,6 +538,7 @@ npm run build
 ## Key Principles for AI Assistants
 
 ### When Making Changes
+
 1. **Read before writing**: Always read existing files before modifying
 2. **Follow conventions**: Match existing code style and patterns
 3. **Security first**: Never introduce vulnerabilities
@@ -503,6 +547,7 @@ npm run build
 6. **Update docs**: Keep documentation in sync with code
 
 ### What NOT to Do
+
 - ❌ Don't bypass authentication checks
 - ❌ Don't use `any` types in TypeScript
 - ❌ Don't hardcode secrets or credentials
@@ -513,6 +558,7 @@ npm run build
 - ❌ Don't use `dangerouslySetInnerHTML`
 
 ### Code Review Checklist
+
 - [ ] Authentication check present in API routes
 - [ ] Database queries filtered by `userId`
 - [ ] Inputs validated with Zod or similar
@@ -526,6 +572,7 @@ npm run build
 ## Resources
 
 ### Documentation
+
 - `/docs/MVP.md` - MVP scope and timeline
 - `/docs/STACK.md` - Tech stack decisions and rationale
 - `/docs/SECURITY.md` - Security best practices
@@ -535,6 +582,7 @@ npm run build
 - `CODE_OF_CONDUCT.md` - Community guidelines
 
 ### External Resources
+
 - [Next.js 14 Docs](https://nextjs.org/docs)
 - [Prisma Docs](https://www.prisma.io/docs)
 - [NextAuth.js Docs](https://next-auth.js.org)
@@ -554,4 +602,4 @@ npm run build
 **Version**: 0.1.0 (MVP Foundation)
 **Status**: Early Development
 
-*This document is maintained automatically. When making significant changes to the codebase structure, conventions, or workflows, please update this file accordingly.*
+_This document is maintained automatically. When making significant changes to the codebase structure, conventions, or workflows, please update this file accordingly._

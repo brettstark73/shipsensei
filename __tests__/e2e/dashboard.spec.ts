@@ -22,7 +22,9 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.goto('/dashboard')
 
     // Should see dashboard content
-    await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /dashboard/i })
+    ).toBeVisible()
   })
 
   test.skip('should display projects list', async ({ page }) => {
@@ -52,7 +54,10 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.goto('/dashboard')
 
     // Click on a project (assumes at least one exists)
-    const projectLink = page.getByRole('link').filter({ hasText: /project/i }).first()
+    const projectLink = page
+      .getByRole('link')
+      .filter({ hasText: /project/i })
+      .first()
     await projectLink.click()
 
     // Should navigate to project page

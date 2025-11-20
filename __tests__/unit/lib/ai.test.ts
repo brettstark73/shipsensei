@@ -8,7 +8,9 @@ import Anthropic from '@anthropic-ai/sdk'
 // Mock the Anthropic SDK (using manual mock from __mocks__)
 jest.mock('@anthropic-ai/sdk')
 
-const mockAnthropicCreate = (Anthropic as typeof Anthropic & { mockCreate: jest.Mock }).mockCreate
+const mockAnthropicCreate = (
+  Anthropic as typeof Anthropic & { mockCreate: jest.Mock }
+).mockCreate
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -113,9 +115,9 @@ describe('AI Service', () => {
         ],
       })
 
-      await expect(
-        generateRequirementsQuestions('TestApp')
-      ).rejects.toThrow('Unexpected response type from Claude')
+      await expect(generateRequirementsQuestions('TestApp')).rejects.toThrow(
+        'Unexpected response type from Claude'
+      )
     })
   })
 

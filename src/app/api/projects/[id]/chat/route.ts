@@ -128,14 +128,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
         orderBy: { order: 'asc' },
       })
 
-      const answeredRequirements = allRequirements.filter((r) => r.answer)
-      const conversationHistory = answeredRequirements.map((r) => ({
+      const answeredRequirements = allRequirements.filter(r => r.answer)
+      const conversationHistory = answeredRequirements.map(r => ({
         question: r.question,
         answer: r.answer!,
       }))
 
       // Check if all current questions are answered
-      const allAnswered = allRequirements.every((r) => r.answer)
+      const allAnswered = allRequirements.every(r => r.answer)
 
       let nextQuestion: string | null = null
       let newRequirement = null

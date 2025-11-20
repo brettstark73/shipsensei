@@ -34,7 +34,8 @@ export const authOptions: NextAuthOptions = {
 
       // Add GitHub access token to session for repo creation
       if (token?.accessToken) {
-        ;(session as { accessToken?: string }).accessToken = token.accessToken as string
+        const sessionWithToken = session as { accessToken?: string }
+        sessionWithToken.accessToken = token.accessToken as string
       }
 
       return session

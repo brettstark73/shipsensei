@@ -52,7 +52,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     // Extract GitHub repo name from URL
     // e.g., "https://github.com/owner/repo" -> "owner/repo"
-    const repoMatch = project.repository.match(/github\.com\/([^\/]+\/[^\/]+)/)
+    const repoMatch = project.repository.match(/github\.com\/([^/]+\/[^/]+)/)
     if (!repoMatch) {
       return NextResponse.json(
         { error: 'Invalid repository URL' },
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
       // Wait for deployment to complete (async, don't block response)
       waitForDeployment(vercelToken, deployment.id)
-        .then(async (completedDeployment) => {
+        .then(async completedDeployment => {
           // Update project with deployment URL
           await prisma.project.update({
             where: { id: projectId },
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
             },
           })
         })
-        .catch((error) => {
+        .catch(error => {
           console.error('Deployment failed:', error)
         })
 

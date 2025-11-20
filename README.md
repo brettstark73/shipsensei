@@ -16,6 +16,7 @@ ShipSensei democratizes software development by guiding complete beginners throu
 ## Problem
 
 Non-technical founders, creators, and entrepreneurs have brilliant ideas but face massive barriers:
+
 - Don't know where to start or what questions to ask
 - Get overwhelmed by technology choices and technical jargon
 - Struggle to translate vision into working software
@@ -25,6 +26,7 @@ Non-technical founders, creators, and entrepreneurs have brilliant ideas but fac
 ## Solution
 
 ShipSensei provides **end-to-end mentorship** through an intelligent wizard that:
+
 1. **Understands your idea** - Asks the right questions to refine requirements
 2. **Makes technical decisions** - Recommends battle-tested tech stacks
 3. **Guides development** - Vibe coding assistance with real-time feedback
@@ -33,13 +35,13 @@ ShipSensei provides **end-to-end mentorship** through an intelligent wizard that
 
 ## Differentiation
 
-| Feature | Lovable/Bolt | Cursor/Copilot | ShipSensei |
-|---------|--------------|----------------|------------|
-| Target audience | Some tech knowledge | Developers | **Complete beginners** |
-| Guidance level | Code generation | Code completion | **End-to-end mentorship** |
-| Scope | Build only | Development | **Idea → Launch** |
-| Best practices | User's responsibility | Developer knows | **Built-in enforcement** |
-| Launch support | None | None | **Landing, marketing, scaling** |
+| Feature         | Lovable/Bolt          | Cursor/Copilot  | ShipSensei                      |
+| --------------- | --------------------- | --------------- | ------------------------------- |
+| Target audience | Some tech knowledge   | Developers      | **Complete beginners**          |
+| Guidance level  | Code generation       | Code completion | **End-to-end mentorship**       |
+| Scope           | Build only            | Development     | **Idea → Launch**               |
+| Best practices  | User's responsibility | Developer knows | **Built-in enforcement**        |
+| Launch support  | None                  | None            | **Landing, marketing, scaling** |
 
 ## Project Structure
 
@@ -66,30 +68,35 @@ We're creating the future of accessible software development. Watch this space, 
 ## Roadmap
 
 **Phase 1: Foundation (Current)**
+
 - [ ] Requirements and architecture documentation
 - [ ] Tech stack selection and validation
 - [ ] Security and testing strategy
 - [ ] Core mentorship engine design
 
 **Phase 2: MVP Wizard**
+
 - [ ] Interactive requirements discovery
 - [ ] Tech stack recommendation engine
 - [ ] Project scaffolding and setup automation
 - [ ] Basic vibe coding assistance
 
 **Phase 3: Build Support**
+
 - [ ] Real-time development guidance
 - [ ] Code review and quality checks
 - [ ] Security enforcement
 - [ ] Testing guidance and automation
 
 **Phase 4: Launch Support**
+
 - [ ] Deployment automation
 - [ ] Landing page generation
 - [ ] Marketing and launch checklists
 - [ ] User feedback collection
 
 **Phase 5: Scale & Polish**
+
 - [ ] Team collaboration features
 - [ ] Template library
 - [ ] Community sharing
@@ -125,4 +132,4 @@ Proprietary components: Commercial license
 
 ---
 
-*Built with ❤️ for founders, creators, and dreamers who code with vibes, not syntax.*
+_Built with ❤️ for founders, creators, and dreamers who code with vibes, not syntax._
