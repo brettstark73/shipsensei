@@ -129,6 +129,8 @@ if (tsPlugin) {
       '@typescript-eslint/no-unused-vars': 'off',
       // Allow require in test files
       '@typescript-eslint/no-require-imports': 'off',
+      // Allow extra semicolons (Prettier sometimes adds them)
+      'no-extra-semi': 'off',
     },
   })
 }
