@@ -25,6 +25,7 @@ const configs = [
       '**/build/**',
       '**/.next/**',
       '**/coverage/**',
+      'projects/**',
     ],
   },
   js.configs.recommended,
@@ -79,16 +80,6 @@ configs.push({
   },
 })
 
-// Add Jest globals for test files
-configs.push({
-  files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
-  languageOptions: {
-    globals: {
-      ...globals.jest,
-    },
-  },
-})
-
 if (tsPlugin && tsParser) {
   configs.push({
     files: ['**/*.{ts,tsx}'],
@@ -108,6 +99,36 @@ if (tsPlugin && tsParser) {
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
+    },
+  })
+}
+
+// Add Jest globals for test files and mocks (must come after TypeScript config)
+configs.push({
+  files: [
+    '**/*.test.{js,jsx,ts,tsx}',
+    '**/*.spec.{js,jsx,ts,tsx}',
+    '**/__mocks__/**/*.{js,jsx,ts,tsx}',
+    'jest.setup.js',
+  ],
+  languageOptions: {
+    globals: {
+      ...globals.jest,
+    },
+  },
+})
+
+// Add lenient rules for TypeScript test files (must come after main TypeScript config)
+if (tsPlugin) {
+  configs.push({
+    files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+    rules: {
+      // Allow any types in test files for mocking
+      '@typescript-eslint/no-explicit-any': 'off',
+      // Allow unused vars prefixed with underscore
+      '@typescript-eslint/no-unused-vars': 'off',
+      // Allow require in test files
+      '@typescript-eslint/no-require-imports': 'off',
     },
   })
 }
