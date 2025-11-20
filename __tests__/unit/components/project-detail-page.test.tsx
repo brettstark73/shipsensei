@@ -121,7 +121,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should fetch project on mount', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -134,7 +134,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display project name and description', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -148,7 +148,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display project status badge', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -161,7 +161,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show loading spinner while fetching', async () => {
-      (global.fetch as jest.Mock).mockImplementation(
+      ;(global.fetch as jest.Mock).mockImplementation(
         () =>
           new Promise(resolve =>
             setTimeout(
@@ -196,7 +196,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show 404 error when project not found', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 404,
       })
@@ -209,7 +209,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show generic error for other API failures', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 500,
       })
@@ -222,7 +222,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show back to dashboard button on error', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 404,
       })
@@ -238,7 +238,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should allow dismissing error banner', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -281,7 +281,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show welcome screen when chat not started', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -297,7 +297,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should have emoji on welcome screen', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -310,7 +310,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display welcome message', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -334,7 +334,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should start chat when button clicked', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectBase }),
@@ -375,7 +375,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show "Starting..." while starting chat', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectBase }),
@@ -422,7 +422,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display first question after starting chat', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectBase }),
@@ -458,7 +458,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should handle error when starting chat fails', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectBase }),
@@ -503,7 +503,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should not show welcome screen when requirements exist', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -518,7 +518,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display progress bar', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -532,7 +532,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display question with AI badge', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -548,7 +548,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show answer textarea for current question', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -565,7 +565,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display character counter', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -578,7 +578,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should update character counter when typing', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -596,7 +596,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display Send button', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -609,7 +609,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should disable Send button when answer is empty', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -623,7 +623,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should enable Send button when answer is not empty', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -663,7 +663,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should submit answer when Send button clicked', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectWithRequirements }),
@@ -714,7 +714,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should submit answer when Enter key is pressed', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectWithRequirements }),
@@ -763,7 +763,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should not submit when Shift+Enter is pressed', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectWithRequirements }),
       })
@@ -785,7 +785,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show "Sending..." while submitting answer', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectWithRequirements }),
@@ -838,7 +838,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should clear textarea after successful submission', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectWithRequirements }),
@@ -912,7 +912,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should handle error when answer submission fails', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectWithRequirements }),
@@ -941,7 +941,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should trim whitespace from answers', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: mockProjectWithRequirements }),
@@ -1062,7 +1062,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should auto-scroll to bottom when new questions appear', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -1316,7 +1316,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show generate project button when stack exists', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: projectWithStack }),
       })
@@ -1331,7 +1331,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should generate project when button clicked', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: projectWithStack }),
@@ -1368,7 +1368,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show alert on successful generation', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: projectWithStack }),
@@ -1419,7 +1419,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show "Generating..." while generating project', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: projectWithStack }),
@@ -1467,7 +1467,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should handle error when generation fails', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ project: projectWithStack }),
@@ -1509,7 +1509,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show deploy button when repository exists', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1522,7 +1522,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should prompt for Vercel token when deploy clicked', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1550,7 +1550,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should deploy project with provided token', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1585,7 +1585,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should not deploy if token prompt cancelled', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1603,7 +1603,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show alert on successful deployment', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1651,7 +1651,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should show "Deploying..." while deploying', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1694,7 +1694,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should handle error when deployment fails', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1717,7 +1717,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should trim whitespace from Vercel token', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1750,7 +1750,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should refresh project after deployment', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: generatedProject }),
       })
@@ -1805,7 +1805,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should navigate to dashboard when back button clicked', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: mockProjectBase }),
       })
@@ -1906,7 +1906,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display draft status with correct styling', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           project: { ...mockProjectBase, status: 'draft' },
@@ -1922,7 +1922,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display generating status with correct styling', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           project: { ...mockProjectBase, status: 'generating' },
@@ -1938,7 +1938,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display ready status with correct styling', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           project: { ...mockProjectBase, status: 'ready' },
@@ -1954,7 +1954,7 @@ describe('ProjectDetailPage', () => {
     })
 
     it('should display deployed status with correct styling', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           project: { ...mockProjectBase, status: 'deployed' },

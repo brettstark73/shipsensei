@@ -286,7 +286,7 @@ describe('New Project Page', () => {
     })
 
     it('should call API with correct data on successful submission', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: { id: 'project123' } }),
       })
@@ -319,7 +319,7 @@ describe('New Project Page', () => {
     })
 
     it('should navigate to project page on successful creation', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: { id: 'project456' } }),
       })
@@ -340,7 +340,7 @@ describe('New Project Page', () => {
     })
 
     it('should trim whitespace from inputs', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: { id: 'project123' } }),
       })
@@ -372,7 +372,7 @@ describe('New Project Page', () => {
     })
 
     it('should send undefined description when empty', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ project: { id: 'project123' } }),
       })
@@ -401,7 +401,7 @@ describe('New Project Page', () => {
     })
 
     it('should display error message on API error', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         json: async () => ({ error: 'Database error' }),
       })
@@ -422,7 +422,7 @@ describe('New Project Page', () => {
     })
 
     it('should display generic error when API returns no message', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         json: async () => ({}),
       })
@@ -443,7 +443,7 @@ describe('New Project Page', () => {
     })
 
     it('should handle network errors', async () => {
-      (global.fetch as jest.Mock).mockRejectedValueOnce(
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
       )
 
@@ -472,7 +472,7 @@ describe('New Project Page', () => {
     })
 
     it('should show loading text in submit button when submitting', async () => {
-      (global.fetch as jest.Mock).mockImplementationOnce(
+      ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
           new Promise(resolve => {
             setTimeout(
@@ -502,7 +502,7 @@ describe('New Project Page', () => {
     })
 
     it('should disable inputs when submitting', async () => {
-      (global.fetch as jest.Mock).mockImplementationOnce(
+      ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
           new Promise(resolve => {
             setTimeout(
@@ -533,7 +533,7 @@ describe('New Project Page', () => {
     })
 
     it('should disable buttons when submitting', async () => {
-      (global.fetch as jest.Mock).mockImplementationOnce(
+      ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
           new Promise(resolve => {
             setTimeout(
@@ -566,7 +566,7 @@ describe('New Project Page', () => {
     })
 
     it('should re-enable form after submission completes', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         json: async () => ({ error: 'Error' }),
       })
@@ -606,7 +606,7 @@ describe('New Project Page', () => {
     })
 
     it('should clear error when resubmitting', async () => {
-      (global.fetch as jest.Mock)
+      ;(global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: false,
           json: async () => ({ error: 'First error' }),

@@ -16,7 +16,7 @@ const mockReposCreateOrUpdateFileContents = jest.fn()
 const mockUsersGetAuthenticated = jest.fn()
 
 beforeEach(() => {
-  (Octokit as jest.MockedClass<typeof Octokit>).mockImplementation(
+  ;(Octokit as jest.MockedClass<typeof Octokit>).mockImplementation(
     () =>
       ({
         repos: {

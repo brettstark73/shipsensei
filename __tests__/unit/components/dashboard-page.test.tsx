@@ -350,7 +350,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should show confirmation dialog when deleting', async () => {
-      (global.confirm as jest.Mock).mockReturnValue(false)
+      ;(global.confirm as jest.Mock).mockReturnValue(false)
 
       render(<DashboardPage />)
 
@@ -365,7 +365,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should not delete if user cancels confirmation', async () => {
-      (global.confirm as jest.Mock).mockReturnValue(false)
+      ;(global.confirm as jest.Mock).mockReturnValue(false)
 
       render(<DashboardPage />)
 
@@ -378,7 +378,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should delete project when confirmed', async () => {
-      (global.confirm as jest.Mock).mockReturnValue(true)
+      ;(global.confirm as jest.Mock).mockReturnValue(true)
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({}),
@@ -399,7 +399,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should remove project from UI after successful deletion', async () => {
-      (global.confirm as jest.Mock).mockReturnValue(true)
+      ;(global.confirm as jest.Mock).mockReturnValue(true)
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({}),
@@ -420,7 +420,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should show error message on delete failure', async () => {
-      (global.confirm as jest.Mock).mockReturnValue(true)
+      ;(global.confirm as jest.Mock).mockReturnValue(true)
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         json: async () => ({}),
@@ -441,7 +441,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should show loading spinner while deleting', async () => {
-      (global.confirm as jest.Mock).mockReturnValue(true)
+      ;(global.confirm as jest.Mock).mockReturnValue(true)
       ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
           new Promise(resolve => {
@@ -470,7 +470,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should disable delete button while deleting', async () => {
-      (global.confirm as jest.Mock).mockReturnValue(true)
+      ;(global.confirm as jest.Mock).mockReturnValue(true)
       ;(global.fetch as jest.Mock).mockImplementationOnce(
         () =>
           new Promise(resolve => {
@@ -548,7 +548,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should display error message on fetch failure', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         json: async () => ({}),
       })
@@ -561,7 +561,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should handle network errors', async () => {
-      (global.fetch as jest.Mock).mockRejectedValueOnce(
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
       )
 
@@ -573,7 +573,7 @@ describe('Dashboard Page', () => {
     })
 
     it('should display error message without hiding UI', async () => {
-      (global.fetch as jest.Mock).mockRejectedValueOnce(
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
       )
 
