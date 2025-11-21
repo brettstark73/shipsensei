@@ -1,10 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
-// import { tokenEncryptionMiddleware } from './prisma-encryption' // TODO: Update for Prisma v7 extensions
+import { tokenEncryptionExtension } from './prisma-encryption'
+
+type ExtendedPrismaClient = ReturnType<typeof PrismaClient.prototype.$extends>
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  prisma: ExtendedPrismaClient | undefined
 }
 
 export const prisma =
@@ -34,10 +36,8 @@ export const prisma =
       throw error
     }
 
-    // TODO: Token encryption middleware needs to be updated for Prisma v7
-    // client.$use(tokenEncryptionMiddleware) // $use is deprecated in Prisma v7
-
-    return client
+    // Apply token encryption extension for OAuth token security
+    return client.$extends(tokenEncryptionExtension)
   })()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma

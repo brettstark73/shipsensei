@@ -74,70 +74,75 @@ async function decryptAccountArray(
 }
 
 /**
- * Prisma middleware for automatic token encryption/decryption
+ * Prisma extension for automatic token encryption/decryption
+ * Replaces deprecated $use middleware for Prisma v7 compatibility
  */
-export const tokenEncryptionMiddleware = async (params: any, next: any) => {
-  // Only process Account model operations
-  if (params.model !== 'Account') {
-    return next(params)
-  }
+export const tokenEncryptionExtension = {
+  name: 'tokenEncryption',
+  query: {
+    account: {
+      async $allOperations({ model, operation, args, query }: any) {
+        try {
+          // Handle create/update operations (encrypt before storing)
+          if (operation === 'create' || operation === 'update') {
+            if (args.data) {
+              args.data = await encryptAccountTokens(args.data)
+            }
+          }
 
-  try {
-    // Handle create/update operations (encrypt before storing)
-    if (params.action === 'create' || params.action === 'update') {
-      if (params.args.data) {
-        params.args.data = await encryptAccountTokens(params.args.data)
-      }
-    }
+          if (operation === 'upsert') {
+            if (args.create) {
+              args.create = await encryptAccountTokens(args.create)
+            }
+            if (args.update) {
+              args.update = await encryptAccountTokens(args.update)
+            }
+          }
 
-    if (params.action === 'upsert') {
-      if (params.args.create) {
-        params.args.create = await encryptAccountTokens(params.args.create)
-      }
-      if (params.args.update) {
-        params.args.update = await encryptAccountTokens(params.args.update)
-      }
-    }
+          if (operation === 'createMany') {
+            if (args.data && Array.isArray(args.data)) {
+              args.data = await Promise.all(
+                args.data.map((item: any) => encryptAccountTokens(item))
+              )
+            }
+          }
 
-    if (params.action === 'createMany') {
-      if (params.args.data && Array.isArray(params.args.data)) {
-        params.args.data = await Promise.all(
-          params.args.data.map((item: any) => encryptAccountTokens(item))
-        )
-      }
-    }
+          if (operation === 'updateMany') {
+            if (args.data) {
+              args.data = await encryptAccountTokens(args.data)
+            }
+          }
 
-    if (params.action === 'updateMany') {
-      if (params.args.data) {
-        params.args.data = await encryptAccountTokens(params.args.data)
-      }
-    }
+          // Execute the query
+          const result = await query(args)
 
-    // Execute the query
-    const result = await next(params)
+          // Handle read operations (decrypt after reading)
+          if (operation === 'findFirst' || operation === 'findUnique') {
+            return result ? await decryptAccountTokens(result) : result
+          }
 
-    // Handle read operations (decrypt after reading)
-    if (params.action === 'findFirst' || params.action === 'findUnique') {
-      return await decryptAccountTokens(result)
-    }
+          if (operation === 'findMany') {
+            return Array.isArray(result)
+              ? await decryptAccountArray(result)
+              : result
+          }
 
-    if (params.action === 'findMany') {
-      return await decryptAccountArray(result)
-    }
+          if (
+            operation === 'create' ||
+            operation === 'update' ||
+            operation === 'upsert'
+          ) {
+            return result ? await decryptAccountTokens(result) : result
+          }
 
-    if (
-      params.action === 'create' ||
-      params.action === 'update' ||
-      params.action === 'upsert'
-    ) {
-      return await decryptAccountTokens(result)
-    }
-
-    return result
-  } catch (error) {
-    console.error('Token encryption middleware error:', error)
-    throw error
-  }
+          return result
+        } catch (error) {
+          console.error('Token encryption extension error:', error)
+          throw error
+        }
+      },
+    },
+  },
 }
 
 /**
