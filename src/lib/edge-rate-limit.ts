@@ -161,19 +161,36 @@ class MemoryStorage implements RateLimitStorage {
   }
 }
 
+// Cached storage instance (singleton pattern)
+let cachedStorage: RateLimitStorage | null = null
+
 /**
- * Get the appropriate storage backend
+ * Get the appropriate storage backend (cached singleton)
  */
 function getStorage(): RateLimitStorage {
+  // Return cached instance if available
+  if (cachedStorage) {
+    return cachedStorage
+  }
+
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN
 
   if (redisUrl && redisToken) {
-    return new RedisStorage(redisUrl, redisToken)
+    cachedStorage = new RedisStorage(redisUrl, redisToken)
+  } else {
+    // Fallback to in-memory storage
+    cachedStorage = new MemoryStorage()
   }
 
-  // Fallback to in-memory storage
-  return new MemoryStorage()
+  return cachedStorage
+}
+
+/**
+ * Clear cached storage (for testing purposes)
+ */
+export function __clearStorageCache(): void {
+  cachedStorage = null
 }
 
 /**
