@@ -20,6 +20,8 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
+  vercelToken   String?   @db.Text // Encrypted Vercel API token
+  githubToken   String?   @db.Text // Encrypted GitHub personal access token
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -69,31 +71,40 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+// ShipSensei Enums
+enum ProjectStatus {
+  DRAFT
+  GENERATING
+  READY
+  DEPLOYED
+}
+
 // ShipSensei Models
 model Project {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
+  id          String        @id @default(cuid())
+  name        String        @db.VarChar(255)
+  description String?       @db.VarChar(1000)
   userId      String
-  status      String   @default("draft") // draft, generating, ready, deployed
-  techStack   String?  @db.Text
-  repository  String?
-  deployment  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      ProjectStatus @default(DRAFT)
+  techStack   String?       @db.Text
+  repository  String?       @db.VarChar(500)
+  deployment  String?       @db.VarChar(500)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   requirements Requirement[]
 
   @@index([userId])
+  @@index([status])
   @@map("projects")
 }
 
 model Requirement {
   id        String   @id @default(cuid())
   projectId String
-  question  String   @db.Text
-  answer    String?  @db.Text
+  question  String   @db.VarChar(1000)
+  answer    String?  @db.VarChar(5000)
   order     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -101,6 +112,7 @@ model Requirement {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+  @@index([projectId, order])
   @@map("requirements")
 }
 

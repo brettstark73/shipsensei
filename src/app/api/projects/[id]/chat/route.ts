@@ -12,6 +12,19 @@ type RouteContext = {
   params: Promise<{ id: string }>
 }
 
+// Validation schemas for different actions
+const chatActionSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('start'),
+  }),
+  z.object({
+    action: z.literal('answer'),
+    requirementId: z.string().cuid(),
+    answer: z.string().min(1).max(5000),
+  }),
+])
+
+// Legacy schema for backwards compatibility
 const answerSchema = z.object({
   requirementId: z.string(),
   answer: z.string().min(1).max(5000),
@@ -28,7 +41,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const { id: projectId } = await context.params
     const body = await request.json()
-    const action = body.action // 'start' or 'answer'
+
+    // SECURITY FIX: Validate action parameter with Zod
+    const validation = chatActionSchema.safeParse(body)
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          error: 'Invalid request',
+          details: validation.error.format(),
+        },
+        { status: 400 }
+      )
+    }
+
+    const { action } = validation.data
 
     // Verify project belongs to user
     const project = await prisma.project.findUnique({
@@ -91,15 +117,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     // SUBMIT ANSWER
     if (action === 'answer') {
-      const validation = answerSchema.safeParse(body)
-      if (!validation.success) {
-        return NextResponse.json(
-          { error: 'Invalid input', details: validation.error.format() },
-          { status: 400 }
-        )
-      }
-
-      const { requirementId, answer } = validation.data
+      // TypeScript knows action is 'answer' here, so we can safely access requirementId and answer
+      const { requirementId, answer } = validation.data as Extract<
+        z.infer<typeof chatActionSchema>,
+        { action: 'answer' }
+      >
 
       // Verify requirement belongs to this project
       const requirement = await prisma.requirement.findUnique({
