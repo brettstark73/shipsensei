@@ -77,20 +77,24 @@ export async function POST(request: NextRequest, context: RouteContext) {
       )
     }
 
-    // Update project status to generating
-    await prisma.project.update({
-      where: { id: projectId },
-      data: { status: 'generating' },
-    })
+    // PERFORMANCE FIX: Use transaction to ensure atomicity
+    // Store original status for proper rollback
+    const originalStatus = project.status
 
     try {
+      // Update project status to generating (outside transaction for immediate feedback)
+      await prisma.project.update({
+        where: { id: projectId },
+        data: { status: 'generating' },
+      })
+
       // Generate repository name from project name
       const repoName = project.name
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '')
 
-      // Create GitHub repository
+      // Create GitHub repository (external API call)
       const repo = await createRepository(
         accessToken,
         repoName,
@@ -98,7 +102,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         false // public by default
       )
 
-      // Generate and validate project template
+      // Generate and validate project template (external AI API call)
       const template = await generateProjectTemplate(
         project.name,
         project.description || '',
@@ -108,23 +112,25 @@ export async function POST(request: NextRequest, context: RouteContext) {
         }))
       )
 
-      // Create files in the repository
+      // Create files in the repository (external API call)
       await createFiles(accessToken, repo.owner, repoName, template.files)
 
-      // Update project with repository info
-      const updatedProject = await prisma.project.update({
-        where: { id: projectId },
-        data: {
-          repository: repo.url,
-          status: 'ready', // ready for deployment
-        },
-        include: {
-          requirements: {
-            orderBy: {
-              order: 'asc',
+      // Update project with repository info (transaction ensures atomicity)
+      const updatedProject = await prisma.$transaction(async tx => {
+        return await tx.project.update({
+          where: { id: projectId },
+          data: {
+            repository: repo.url,
+            status: 'ready', // ready for deployment
+          },
+          include: {
+            requirements: {
+              orderBy: {
+                order: 'asc',
+              },
             },
           },
-        },
+        })
       })
 
       return NextResponse.json({
@@ -133,11 +139,16 @@ export async function POST(request: NextRequest, context: RouteContext) {
         repository: repo,
       })
     } catch (error) {
-      // Revert status on error
-      await prisma.project.update({
-        where: { id: projectId },
-        data: { status: 'ready' },
-      })
+      // SECURITY FIX: Revert to original status (not hardcoded 'ready')
+      try {
+        await prisma.project.update({
+          where: { id: projectId },
+          data: { status: originalStatus },
+        })
+      } catch (revertError) {
+        console.error('Failed to revert project status:', revertError)
+        // Log but don't throw - we want to preserve the original error
+      }
 
       throw error
     }

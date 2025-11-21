@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth.config'
 import { prisma } from '@/lib/prisma'
 import { deployToVercel, waitForDeployment } from '@/lib/vercel'
+import { decryptToken } from '@/lib/encryption'
 
 type RouteContext = {
   params: Promise<{ id: string }>
@@ -19,14 +20,35 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const { id: projectId } = await context.params
 
-    // Get Vercel token from request body
-    const body = await request.json()
-    const vercelToken = body.vercelToken as string
+    // Get user's stored Vercel token from database (SECURITY FIX)
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { vercelToken: true },
+    })
 
-    if (!vercelToken) {
+    if (!user?.vercelToken) {
       return NextResponse.json(
-        { error: 'Vercel token is required' },
+        {
+          error:
+            'Vercel token not configured. Please add your Vercel API token in settings.',
+          action: 'configure_token',
+        },
         { status: 400 }
+      )
+    }
+
+    // Decrypt the stored token
+    let vercelToken: string
+    try {
+      vercelToken = await decryptToken(user.vercelToken)
+    } catch (error) {
+      console.error('Failed to decrypt Vercel token:', error)
+      return NextResponse.json(
+        {
+          error:
+            'Failed to decrypt Vercel token. Please re-add your token in settings.',
+        },
+        { status: 500 }
       )
     }
 
@@ -107,9 +129,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
     } catch (error) {
       console.error('Error deploying to Vercel:', error)
 
+      // SECURITY: Don't expose sensitive token information in error messages
       let errorMessage = 'Failed to deploy to Vercel'
       if (error instanceof Error) {
-        errorMessage = error.message
+        // Sanitize error message to remove any potential token leakage
+        errorMessage = error.message.replace(/ver_[A-Za-z0-9_]+/g, '[TOKEN]')
       }
 
       return NextResponse.json({ error: errorMessage }, { status: 500 })
