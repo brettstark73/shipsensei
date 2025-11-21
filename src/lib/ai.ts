@@ -1,9 +1,35 @@
 import Anthropic from '@anthropic-ai/sdk'
 
-// Initialize Anthropic client
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || '',
-})
+// Configurable model with fallback to current stable
+const ANTHROPIC_MODEL =
+  process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022'
+
+// Lazy initialization to avoid import-time failures
+let anthropic: Anthropic | null = null
+
+/**
+ * Get or initialize Anthropic client with runtime validation
+ */
+function getAnthropicClient(): Anthropic {
+  if (!anthropic) {
+    // Skip validation in test environment or when explicitly disabled
+    if (process.env.NODE_ENV === 'test' && !process.env.ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY not available in test environment')
+    }
+
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error(
+        'ANTHROPIC_API_KEY environment variable is required. Please set it in your .env.local file.'
+      )
+    }
+
+    anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    })
+  }
+
+  return anthropic
+}
 
 export type Message = {
   role: 'user' | 'assistant'
@@ -27,8 +53,8 @@ Generate 5-7 smart, specific questions to discover their true requirements. Focu
 Return ONLY a JSON array of question strings, no explanation.
 Example: ["Who is your target user?", "What's the main problem you're solving?"]`
 
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const response = await getAnthropicClient().messages.create({
+    model: ANTHROPIC_MODEL,
     max_tokens: 1024,
     messages: [
       {
@@ -79,8 +105,8 @@ If enough information has been gathered, respond with just "COMPLETE".
 
 Return ONLY the question text, nothing else.`
 
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const response = await getAnthropicClient().messages.create({
+    model: ANTHROPIC_MODEL,
     max_tokens: 256,
     messages: [
       {
@@ -119,8 +145,8 @@ Recommend ONE opinionated tech stack using Next.js 14. Return JSON with:
 
 Keep it simple and beginner-friendly. Return ONLY valid JSON.`
 
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const response = await getAnthropicClient().messages.create({
+    model: ANTHROPIC_MODEL,
     max_tokens: 512,
     messages: [
       {
@@ -147,4 +173,5 @@ Keep it simple and beginner-friendly. Return ONLY valid JSON.`
   }
 }
 
-export { anthropic }
+// Export lazy-initialized client getter for external use
+export { getAnthropicClient as anthropic }

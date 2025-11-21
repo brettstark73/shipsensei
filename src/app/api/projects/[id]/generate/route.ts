@@ -3,7 +3,11 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth.config'
 import { prisma } from '@/lib/prisma'
 import { createRepository, createFiles } from '@/lib/github'
-import { generateProjectTemplate } from '@/lib/project-generator'
+import {
+  generateProjectTemplate,
+  ProjectGenerationError,
+} from '@/lib/project-generator'
+import { validateGitHubAccess } from '@/lib/github-auth'
 
 type RouteContext = {
   params: Promise<{ id: string }>
@@ -20,19 +24,21 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const { id: projectId } = await context.params
 
-    // Get GitHub access token from session
-    // In a real app, this would be stored securely in the database
-    const accessToken = (session as { accessToken?: string }).accessToken
+    // Securely validate GitHub access (never expose tokens to client)
+    const githubAccess = await validateGitHubAccess(request)
 
-    if (!accessToken) {
+    if (!githubAccess.hasAccess || !githubAccess.token) {
       return NextResponse.json(
         {
           error:
-            'GitHub access token not found. Please reconnect your GitHub account.',
+            githubAccess.error ||
+            'GitHub access required. Please re-authenticate.',
         },
         { status: 400 }
       )
     }
+
+    const accessToken = githubAccess.token
 
     // Verify project belongs to user
     const project = await prisma.project.findUnique({
@@ -92,7 +98,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         false // public by default
       )
 
-      // Generate project template
+      // Generate and validate project template
       const template = await generateProjectTemplate(
         project.name,
         project.description || '',
@@ -137,6 +143,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
   } catch (error) {
     console.error('Error generating project:', error)
+
+    // Handle validation errors specifically
+    if (error instanceof ProjectGenerationError) {
+      return NextResponse.json(
+        {
+          error: 'Code validation failed',
+          message: error.message,
+          validationErrors: error.validationErrors,
+          details:
+            'The AI-generated code contains security vulnerabilities or quality issues',
+        },
+        { status: 400 }
+      )
+    }
 
     let errorMessage = 'Internal server error'
 

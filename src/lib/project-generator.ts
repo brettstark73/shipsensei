@@ -1,10 +1,28 @@
 import { anthropic } from './ai'
+import { validateTypeScriptCode, validateMarkdown } from './code-validator'
 
 export type ProjectTemplate = {
   files: Array<{
     path: string
     content: string
   }>
+}
+
+export type ValidationError = {
+  file: string
+  errors: string[]
+  warnings: string[]
+  securityIssues: string[]
+}
+
+export class ProjectGenerationError extends Error {
+  constructor(
+    message: string,
+    public validationErrors: ValidationError[]
+  ) {
+    super(message)
+    this.name = 'ProjectGenerationError'
+  }
 }
 
 // Generate package.json content
@@ -180,7 +198,7 @@ Return ONLY the markdown content, no code fences.`
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022',
       max_tokens: 2048,
       messages: [
         {
@@ -263,7 +281,7 @@ Return ONLY the React component code, no explanation.`
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022',
       max_tokens: 2048,
       messages: [
         {
@@ -332,10 +350,57 @@ export async function generateProjectTemplate(
   projectDescription: string,
   requirements: Array<{ question: string; answer: string }>
 ): Promise<ProjectTemplate> {
+  // Generate AI content
   const [readme, homePage] = await Promise.all([
     generateReadme(projectName, projectDescription, requirements),
     generateHomePage(projectName, requirements),
   ])
+
+  // Validate AI-generated content
+  const validationErrors: ValidationError[] = []
+
+  // Validate README.md
+  const readmeValidation = validateMarkdown(readme)
+  if (!readmeValidation.isValid || readmeValidation.securityIssues.length > 0) {
+    validationErrors.push({
+      file: 'README.md',
+      errors: readmeValidation.errors,
+      warnings: readmeValidation.warnings,
+      securityIssues: readmeValidation.securityIssues,
+    })
+  }
+
+  // Validate page.tsx (React component)
+  const pageValidation = await validateTypeScriptCode(homePage, 'page.tsx', {
+    enableTypeCheck: false, // Skip TypeScript checking to avoid dependency issues
+    enableLinting: false, // Skip ESLint to avoid setup complexity
+    enableSecurityScan: true,
+    maxFileSize: 50_000,
+  })
+
+  if (!pageValidation.isValid || pageValidation.securityIssues.length > 0) {
+    validationErrors.push({
+      file: 'src/app/page.tsx',
+      errors: pageValidation.errors,
+      warnings: pageValidation.warnings,
+      securityIssues: pageValidation.securityIssues,
+    })
+  }
+
+  // If validation failed, throw error with details
+  if (validationErrors.length > 0) {
+    const hasSecurityIssues = validationErrors.some(
+      e => e.securityIssues.length > 0
+    )
+    const hasCriticalErrors = validationErrors.some(e => e.errors.length > 0)
+
+    if (hasSecurityIssues || hasCriticalErrors) {
+      throw new ProjectGenerationError(
+        'AI-generated code failed security and quality validation',
+        validationErrors
+      )
+    }
+  }
 
   const files = [
     // Configuration files

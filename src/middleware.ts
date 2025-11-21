@@ -1,45 +1,30 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { checkRateLimit } from '@/lib/edge-rate-limit'
+import { withRequestId, createRequestLogger } from '@/lib/edge-logger'
 
 /**
- * Next.js Middleware
+ * Next.js Middleware (Edge Runtime Compatible)
  *
  * Runs on Edge Runtime before requests reach API routes.
  * Handles:
- * - Rate limiting
+ * - Request ID generation and observability (Web Crypto API)
+ * - Rate limiting (in-memory, resets on cold starts)
  * - Authentication checks for protected routes
- * - Request logging
+ * - Request logging and performance tracking
+ *
+ * Note: Uses Edge-compatible components. Rate limits reset on cold starts.
+ * For persistent rate limiting, move to API routes with database backing.
  */
 
-// Simple in-memory rate limiter for Edge runtime
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
-
-function rateLimit(identifier: string, limit: number, windowMs: number) {
-  const now = Date.now()
-  const key = `${identifier}:${windowMs}`
-
-  let entry = rateLimitStore.get(key)
-
-  if (!entry || now > entry.resetTime) {
-    entry = { count: 0, resetTime: now + windowMs }
-  }
-
-  entry.count++
-  rateLimitStore.set(key, entry)
-
-  const remaining = Math.max(0, limit - entry.count)
-  const limited = entry.count > limit
-
-  return {
-    limited,
-    remaining,
-    resetTime: entry.resetTime,
-  }
-}
-
 export async function middleware(request: NextRequest) {
+  const startTime = Date.now()
   const { pathname } = request.nextUrl
+
+  // Generate request ID for observability
+  const requestId = withRequestId()
+  const logger = createRequestLogger(requestId)
 
   // Skip rate limiting for:
   // - Static files
@@ -73,38 +58,85 @@ export async function middleware(request: NextRequest) {
     windowMs = 60 * 60 * 1000
   }
 
-  const { limited, remaining, resetTime } = rateLimit(
-    identifier,
-    limit,
-    windowMs
-  )
+  try {
+    const { limited, remaining, resetTime, retryAfter } = await checkRateLimit(
+      identifier,
+      limit,
+      windowMs
+    )
 
-  if (limited) {
-    return NextResponse.json(
-      {
-        error: 'Too many requests',
-        message: 'Please try again later',
-        retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
-      },
-      {
-        status: 429,
-        headers: {
-          'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
-          'X-RateLimit-Limit': String(limit),
-          'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': String(resetTime),
+    if (limited) {
+      const duration = Date.now() - startTime
+
+      logger.logSecurityEvent('rate_limit_exceeded', 'medium', {
+        requestId,
+        userId,
+        identifier,
+        limit,
+        duration,
+        metadata: { pathname, userAgent: request.headers.get('user-agent') },
+      })
+
+      return NextResponse.json(
+        {
+          error: 'Too many requests',
+          message: 'Please try again later',
+          retryAfter,
+          requestId,
         },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(retryAfter),
+            'X-RateLimit-Limit': String(limit),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': String(resetTime),
+            'X-Request-ID': requestId,
+          },
+        }
+      )
+    }
+
+    // Add rate limit headers and request ID to response
+    const response = NextResponse.next()
+    response.headers.set('X-RateLimit-Limit', String(limit))
+    response.headers.set('X-RateLimit-Remaining', String(remaining))
+    response.headers.set('X-RateLimit-Reset', String(resetTime))
+    response.headers.set('X-Request-ID', requestId)
+
+    // Log successful request
+    const duration = Date.now() - startTime
+    logger.logApiRequest(
+      request.method,
+      pathname,
+      200, // Middleware success
+      duration,
+      {
+        requestId,
+        userId,
+        remaining,
+        metadata: { userAgent: request.headers.get('user-agent') },
       }
     )
+
+    return response
+  } catch (error) {
+    const duration = Date.now() - startTime
+
+    // Log middleware error
+    logger.error('Rate limiter middleware error', {
+      requestId,
+      operation: 'middleware',
+      duration,
+      error: error instanceof Error ? error.message : String(error),
+      metadata: { pathname },
+    })
+
+    // Fail open - allow the request if rate limiter fails
+    const response = NextResponse.next()
+    response.headers.set('X-Request-ID', requestId)
+    return response
   }
-
-  // Add rate limit headers to response
-  const response = NextResponse.next()
-  response.headers.set('X-RateLimit-Limit', String(limit))
-  response.headers.set('X-RateLimit-Remaining', String(remaining))
-  response.headers.set('X-RateLimit-Reset', String(resetTime))
-
-  return response
 }
 
 // Configure which routes middleware should run on

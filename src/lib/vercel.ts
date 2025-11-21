@@ -1,6 +1,41 @@
 // Vercel deployment integration using REST API
 // https://vercel.com/docs/rest-api
 
+// Request timeout configuration
+const REQUEST_TIMEOUT = 30000 // 30 seconds
+const DEPLOYMENT_CHECK_TIMEOUT = 10000 // 10 seconds per status check
+
+/**
+ * Create fetch with timeout and proper error handling
+ */
+async function fetchWithTimeout(
+  url: string,
+  options: Parameters<typeof fetch>[1] & { timeout?: number } = {}
+): Promise<Response> {
+  const { timeout = REQUEST_TIMEOUT, ...fetchOptions } = options
+
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+  try {
+    const response = await fetch(url, {
+      ...fetchOptions,
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeoutId)
+    return response
+  } catch (error) {
+    clearTimeout(timeoutId)
+
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`Request timeout: ${url} took longer than ${timeout}ms`)
+    }
+
+    throw error
+  }
+}
+
 type VercelDeployment = {
   id: string
   url: string
@@ -24,7 +59,7 @@ export async function createOrGetVercelProject(
   githubRepo: string // format: "owner/repo"
 ): Promise<VercelProject> {
   // First try to get existing project
-  const getResponse = await fetch(
+  const getResponse = await fetchWithTimeout(
     `https://api.vercel.com/v9/projects/${projectName}`,
     {
       headers: {
@@ -39,25 +74,28 @@ export async function createOrGetVercelProject(
   }
 
   // Create new project if it doesn't exist
-  const createResponse = await fetch('https://api.vercel.com/v10/projects', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${vercelToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: projectName,
-      gitRepository: {
-        type: 'github',
-        repo: githubRepo,
+  const createResponse = await fetchWithTimeout(
+    'https://api.vercel.com/v10/projects',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${vercelToken}`,
+        'Content-Type': 'application/json',
       },
-      framework: 'nextjs',
-      buildCommand: 'npm run build',
-      devCommand: 'npm run dev',
-      installCommand: 'npm install',
-      outputDirectory: '.next',
-    }),
-  })
+      body: JSON.stringify({
+        name: projectName,
+        gitRepository: {
+          type: 'github',
+          repo: githubRepo,
+        },
+        framework: 'nextjs',
+        buildCommand: 'npm run build',
+        devCommand: 'npm run dev',
+        installCommand: 'npm install',
+        outputDirectory: '.next',
+      }),
+    }
+  )
 
   if (!createResponse.ok) {
     const error = await createResponse.json()
@@ -82,22 +120,25 @@ export async function deployToVercel(
 
   // Trigger deployment using Git Deploy webhook
   // This triggers Vercel to pull from GitHub and deploy
-  const response = await fetch(`https://api.vercel.com/v13/deployments`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${vercelToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      name: projectName,
-      gitSource: {
-        type: 'github',
-        repo: githubRepo,
-        ref: 'main', // or 'master'
+  const response = await fetchWithTimeout(
+    `https://api.vercel.com/v13/deployments`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${vercelToken}`,
+        'Content-Type': 'application/json',
       },
-      target: production ? 'production' : 'preview',
-    }),
-  })
+      body: JSON.stringify({
+        name: projectName,
+        gitSource: {
+          type: 'github',
+          repo: githubRepo,
+          ref: 'main', // or 'master'
+        },
+        target: production ? 'production' : 'preview',
+      }),
+    }
+  )
 
   if (!response.ok) {
     const error = await response.json()
@@ -115,12 +156,13 @@ export async function getDeploymentStatus(
   vercelToken: string,
   deploymentId: string
 ): Promise<VercelDeployment> {
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `https://api.vercel.com/v13/deployments/${deploymentId}`,
     {
       headers: {
         Authorization: `Bearer ${vercelToken}`,
       },
+      timeout: DEPLOYMENT_CHECK_TIMEOUT, // Shorter timeout for status checks
     }
   )
 
@@ -164,7 +206,7 @@ export async function waitForDeployment(
 
 // Get user's Vercel account info
 export async function getVercelUser(vercelToken: string) {
-  const response = await fetch('https://api.vercel.com/v2/user', {
+  const response = await fetchWithTimeout('https://api.vercel.com/v2/user', {
     headers: {
       Authorization: `Bearer ${vercelToken}`,
     },

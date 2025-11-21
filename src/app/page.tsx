@@ -17,6 +17,14 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Skip to main content link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Skip to main content
+      </a>
+
       {/* Header */}
       <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -29,6 +37,9 @@ export default function Home() {
             <button
               onClick={handleGetStarted}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+              aria-label={
+                session ? 'Go to dashboard' : 'Start building your project'
+              }
             >
               {status === 'loading'
                 ? 'Loading...'
@@ -41,18 +52,21 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section
+        id="main-content"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20"
+      >
         <div className="text-center">
           <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
             🚀 Ship your idea in under 30 minutes
           </div>
-          <h2 className="text-6xl md:text-7xl font-bold text-gray-900 mb-6">
+          <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-6">
             From Idea to
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               Launched Product
             </span>
-          </h2>
+          </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto">
             AI-powered mentorship that guides complete beginners through
             requirements, development, and deployment
@@ -61,6 +75,9 @@ export default function Home() {
             <button
               onClick={handleGetStarted}
               className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl"
+              aria-label={
+                session ? 'Access your dashboard' : 'Start building for free'
+              }
             >
               {session ? 'Go to Dashboard →' : 'Start Building Free →'}
             </button>
@@ -76,9 +93,9 @@ export default function Home() {
       {/* Features Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
-          <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             The Complete Journey
-          </h3>
+          </h2>
           <p className="text-lg text-gray-600">
             Everything you need to go from idea to production
           </p>
@@ -93,6 +110,8 @@ export default function Home() {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-label="Chat conversation icon"
+                role="img"
               >
                 <path
                   strokeLinecap="round"
@@ -102,9 +121,9 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h4 className="text-xl font-bold text-gray-900 mb-3">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
               AI Requirements Discovery
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Chat with Claude to refine your idea through intelligent Q&A. Get
               clear requirements in minutes.
@@ -119,6 +138,8 @@ export default function Home() {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-label="Technology funnel icon"
+                role="img"
               >
                 <path
                   strokeLinecap="round"
@@ -128,9 +149,9 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h4 className="text-xl font-bold text-gray-900 mb-3">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
               Smart Tech Stack
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Get personalized recommendations. We suggest battle-tested tools
               that fit your needs.
@@ -145,6 +166,8 @@ export default function Home() {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-label="Code generation icon"
+                role="img"
               >
                 <path
                   strokeLinecap="round"
@@ -154,9 +177,9 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h4 className="text-xl font-bold text-gray-900 mb-3">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
               Auto-Generate Project
-            </h4>
+            </h3>
             <p className="text-gray-600">
               AI creates a complete Next.js app customized to your requirements.
               Code pushed to GitHub automatically.
@@ -171,6 +194,8 @@ export default function Home() {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-label="Lightning bolt deployment icon"
+                role="img"
               >
                 <path
                   strokeLinecap="round"
@@ -180,9 +205,9 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h4 className="text-xl font-bold text-gray-900 mb-3">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
               One-Click Deploy
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Deploy to Vercel with a single click. Get a live URL in minutes.
               Share your creation with the world.
@@ -195,9 +220,9 @@ export default function Home() {
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               How It Works
-            </h3>
+            </h2>
             <p className="text-lg text-gray-600">
               Four simple steps to your launched product
             </p>
@@ -210,9 +235,9 @@ export default function Home() {
                   1
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Describe Your Idea
-                  </h4>
+                  </h3>
                   <p className="text-gray-600">
                     Tell us what you want to build. Our AI asks smart questions
                     to understand your vision.
@@ -225,9 +250,9 @@ export default function Home() {
                   2
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Get Recommendations
-                  </h4>
+                  </h3>
                   <p className="text-gray-600">
                     Receive a personalized tech stack recommendation with clear
                     explanations.
@@ -240,9 +265,9 @@ export default function Home() {
                   3
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Generate Code
-                  </h4>
+                  </h3>
                   <p className="text-gray-600">
                     AI creates your complete project with custom features based
                     on your answers.
@@ -255,9 +280,9 @@ export default function Home() {
                   4
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Deploy & Share
-                  </h4>
+                  </h3>
                   <p className="text-gray-600">
                     One-click deployment to Vercel. Your product goes live and
                     you get a URL to share.
@@ -280,15 +305,16 @@ export default function Home() {
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-center text-white">
-          <h3 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Ship Your Idea?
-          </h3>
+          </h2>
           <p className="text-xl mb-8 opacity-90">
             Join creators building the future with AI-powered mentorship
           </p>
           <button
             onClick={handleGetStarted}
             className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition shadow-lg hover:shadow-xl"
+            aria-label={session ? 'Go to dashboard' : 'Start building free'}
           >
             {session ? 'Go to Dashboard' : 'Start Building Free'}
           </button>
@@ -301,7 +327,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white">
+      <footer className="border-t border-gray-200 bg-white" role="contentinfo">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center text-gray-600">
             <p className="text-lg font-semibold mb-2">

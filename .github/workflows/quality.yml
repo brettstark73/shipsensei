@@ -10,6 +10,22 @@ jobs:
   quality:
     runs-on: ubuntu-latest
 
+    # Database service for Prisma tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -20,6 +36,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Cache Prisma
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.prisma
+            ~/.cache/prisma
+          key: ${{ runner.os }}-prisma-${{ hashFiles('**/schema.prisma') }}
+          restore-keys: |
+            ${{ runner.os }}-prisma-
+
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then
@@ -28,6 +54,26 @@ jobs:
             echo "No package-lock.json found; running npm install"
             npm install
           fi
+
+      - name: Setup Prisma
+        run: |
+          echo "🗄️ Setting up Prisma database for testing..."
+
+          # Generate Prisma Client
+          echo "📦 Generating Prisma Client..."
+          npx prisma generate
+
+          # Run database migrations
+          echo "🔄 Running database migrations..."
+          npx prisma migrate deploy
+
+          # Verify database connection
+          echo "✅ Verifying database connection..."
+          npx prisma db execute --stdin <<< "SELECT 1;"
+
+          echo "🎉 Database setup complete!"
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
 
       - name: Verify dependency integrity
         run: |
@@ -63,10 +109,20 @@ jobs:
         run: npm run test:ci
         env:
           CI: true
+          NODE_ENV: test
+          # SECURITY: All secrets use GitHub Secrets with safe fallbacks
+          # Configure GitHub Secrets in repository settings for production values
           NEXTAUTH_URL: http://localhost:3000
-          NEXTAUTH_SECRET: test-secret-key-for-ci
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'test-secret-key-for-ci' }}
           DATABASE_URL: postgresql://test:test@localhost:5432/test
-          ANTHROPIC_API_KEY: test-key
+          DIRECT_DATABASE_URL: postgresql://test:test@localhost:5432/test
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY || 'test-key' }}
+          ANTHROPIC_MODEL: claude-3-5-sonnet-20241022
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID || 'test-client-id' }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET || 'test-client-secret' }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || 'test-google-id' }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || 'test-google-secret' }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
 
       - name: Security audit
         run: npm audit --audit-level high

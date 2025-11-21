@@ -32,16 +32,13 @@ export const authOptions: NextAuthOptions = {
         session.user.id = user?.id || (token?.sub as string)
       }
 
-      // Add GitHub access token to session for repo creation
-      if (token?.accessToken) {
-        const sessionWithToken = session as { accessToken?: string }
-        sessionWithToken.accessToken = token.accessToken as string
-      }
+      // SECURITY: Never expose OAuth tokens to client sessions
+      // Access tokens are kept server-side only in JWT
 
       return session
     },
     async jwt({ token, account }) {
-      // Store access token in JWT for later use
+      // Store access token in JWT for server-side use only
       if (account?.access_token) {
         token.accessToken = account.access_token
       }
