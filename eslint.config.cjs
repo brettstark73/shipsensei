@@ -133,6 +133,24 @@ if (tsPlugin) {
       'no-extra-semi': 'off',
     },
   })
+
+  // Allow any types and unused vars in middleware/encryption files
+  configs.push({
+    files: [
+      'src/lib/prisma-encryption.ts',
+      'src/app/api/user/tokens/route.ts',
+      'src/lib/code-validator.ts',
+      'src/lib/edge-rate-limit.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      // Allow dynamic file operations in code validator (needed for temp files)
+      'security/detect-non-literal-fs-filename': 'off',
+      // Allow object injection in encryption middleware (controlled context)
+      'security/detect-object-injection': 'off',
+    },
+  })
 }
 
 module.exports = configs

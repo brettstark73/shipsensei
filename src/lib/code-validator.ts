@@ -261,10 +261,22 @@ async function validateTypeScript(
     return []
   } catch (error: unknown) {
     // TypeScript errors are returned in stderr
-    if (error.stderr) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'stderr' in error &&
+      typeof error.stderr === 'string'
+    ) {
       return [error.stderr]
     }
-    return [`TypeScript validation error: ${error.message}`]
+    const message =
+      error &&
+      typeof error === 'object' &&
+      'message' in error &&
+      typeof error.message === 'string'
+        ? error.message
+        : String(error)
+    return [`TypeScript validation error: ${message}`]
   } finally {
     // Clean up temp file
     try {
@@ -311,7 +323,12 @@ async function validateWithESLint(
     return { errors, warnings }
   } catch (error: unknown) {
     // ESLint returns non-zero exit code for errors, parse the output
-    if (error.stdout) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'stdout' in error &&
+      typeof error.stdout === 'string'
+    ) {
       try {
         const results = JSON.parse(error.stdout)
         const errors: string[] = []
@@ -330,11 +347,25 @@ async function validateWithESLint(
 
         return { errors, warnings }
       } catch {
-        return { errors: [`ESLint error: ${error.message}`], warnings: [] }
+        const message =
+          error &&
+          typeof error === 'object' &&
+          'message' in error &&
+          typeof error.message === 'string'
+            ? error.message
+            : String(error)
+        return { errors: [`ESLint error: ${message}`], warnings: [] }
       }
     }
 
-    return { errors: [`ESLint error: ${error.message}`], warnings: [] }
+    const message =
+      error &&
+      typeof error === 'object' &&
+      'message' in error &&
+      typeof error.message === 'string'
+        ? error.message
+        : String(error)
+    return { errors: [`ESLint error: ${message}`], warnings: [] }
   } finally {
     try {
       await fs.unlink(tempFile)

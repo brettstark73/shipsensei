@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { encryptToken, decryptToken, isEncryptedToken } from './encryption'
 
 /**
@@ -76,10 +76,7 @@ async function decryptAccountArray(
 /**
  * Prisma middleware for automatic token encryption/decryption
  */
-export const tokenEncryptionMiddleware: Prisma.Middleware = async (
-  params,
-  next
-) => {
+export const tokenEncryptionMiddleware = async (params: any, next: any) => {
   // Only process Account model operations
   if (params.model !== 'Account') {
     return next(params)
@@ -105,7 +102,7 @@ export const tokenEncryptionMiddleware: Prisma.Middleware = async (
     if (params.action === 'createMany') {
       if (params.args.data && Array.isArray(params.args.data)) {
         params.args.data = await Promise.all(
-          params.args.data.map(item => encryptAccountTokens(item))
+          params.args.data.map((item: any) => encryptAccountTokens(item))
         )
       }
     }
@@ -146,7 +143,9 @@ export const tokenEncryptionMiddleware: Prisma.Middleware = async (
 /**
  * Manual token encryption for legacy data migration
  */
-export async function encryptExistingTokens(prisma: unknown): Promise<number> {
+export async function encryptExistingTokens(
+  prisma: PrismaClient
+): Promise<number> {
   console.log('Starting token encryption migration...')
 
   // Find all accounts with unencrypted tokens
@@ -166,7 +165,7 @@ export async function encryptExistingTokens(prisma: unknown): Promise<number> {
 
     // Check each token field
     for (const field of ENCRYPTED_FIELDS) {
-      const token = account[field]
+      const token = (account as any)[field]
       if (token && typeof token === 'string' && !isEncryptedToken(token)) {
         updates[field] = await encryptToken(token)
       }
@@ -191,7 +190,7 @@ export async function encryptExistingTokens(prisma: unknown): Promise<number> {
 /**
  * Validate that all tokens are properly encrypted
  */
-export async function validateTokenEncryption(prisma: unknown): Promise<{
+export async function validateTokenEncryption(prisma: PrismaClient): Promise<{
   totalAccounts: number
   encryptedAccounts: number
   unencryptedAccounts: number
@@ -216,7 +215,7 @@ export async function validateTokenEncryption(prisma: unknown): Promise<{
     let hasCorrupted = false
 
     for (const field of ENCRYPTED_FIELDS) {
-      const token = account[field]
+      const token = (account as any)[field]
       if (token && typeof token === 'string') {
         if (isEncryptedToken(token)) {
           try {

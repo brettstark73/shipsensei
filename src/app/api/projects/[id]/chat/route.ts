@@ -24,11 +24,7 @@ const chatActionSchema = z.discriminatedUnion('action', [
   }),
 ])
 
-// Legacy schema for backwards compatibility
-const answerSchema = z.object({
-  requirementId: z.string(),
-  answer: z.string().min(1).max(5000),
-})
+// Legacy schema removed - now using chatRequest schema
 
 // POST /api/projects/[id]/chat - Start chat or submit answer
 export async function POST(request: NextRequest, context: RouteContext) {

@@ -3,12 +3,6 @@ const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-
-  // Sentry configuration
-  sentry: {
-    // Hide source maps from generated client bundles
-    hideSourceMaps: true,
-  },
 }
 
 // Wrap with Sentry config only if SENTRY_DSN is set

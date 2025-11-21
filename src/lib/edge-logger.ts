@@ -130,8 +130,11 @@ class EdgeLogger {
 
     this.log(level, `Security event: ${event}`, {
       ...context,
-      securityEvent: event,
-      severity,
+      metadata: {
+        ...context.metadata,
+        securityEvent: event,
+        severity,
+      },
     })
   }
 
@@ -149,10 +152,13 @@ class EdgeLogger {
 
     this.log(level, `API ${method} ${url} - ${statusCode}`, {
       ...context,
-      method,
-      url,
-      statusCode,
       duration,
+      metadata: {
+        ...context.metadata,
+        method,
+        url,
+        statusCode,
+      },
     })
   }
 }

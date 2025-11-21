@@ -9,11 +9,29 @@ import { prisma } from './prisma'
 import { deployToVercel, waitForDeployment } from './vercel'
 
 export type DeploymentStatus =
-  | 'pending'     // Initial state, not started
-  | 'deploying'   // Deployment in progress
-  | 'deployed'    // Successfully deployed
-  | 'failed'      // Deployment failed
-  | 'retrying'    // Automatic retry in progress
+  | 'pending' // Initial state, not started
+  | 'deploying' // Deployment in progress
+  | 'deployed' // Successfully deployed
+  | 'failed' // Deployment failed
+  | 'retrying' // Automatic retry in progress
+
+/**
+ * Convert DeploymentStatus to ProjectStatus enum
+ */
+function mapDeploymentStatusToProjectStatus(
+  deploymentStatus: DeploymentStatus
+): 'READY' | 'GENERATING' | 'DEPLOYED' {
+  switch (deploymentStatus) {
+    case 'pending':
+    case 'failed':
+    case 'retrying':
+      return 'READY' // Can retry deployment
+    case 'deploying':
+      return 'GENERATING' // In progress
+    case 'deployed':
+      return 'DEPLOYED' // Successfully deployed
+  }
+}
 
 export interface DeploymentResult {
   success: boolean
@@ -46,13 +64,14 @@ async function updateDeploymentStatus(
     await prisma.project.update({
       where: { id: projectId },
       data: {
-        status,
+        status: mapDeploymentStatusToProjectStatus(status),
         deployment: deploymentUrl || undefined,
         // Store deployment metadata in a JSON field if available
-        ...(deploymentId && {
-          // We could add a deploymentMetadata JSON field to store this
-          // For now, we'll track it in logs
-        }),
+        ...(deploymentId &&
+          {
+            // We could add a deploymentMetadata JSON field to store this
+            // For now, we'll track it in logs
+          }),
         updatedAt: new Date(),
       },
     })
@@ -75,7 +94,13 @@ async function updateDeploymentStatus(
 export async function startDeployment(
   context: DeploymentContext
 ): Promise<DeploymentResult> {
-  const { projectId, vercelToken, vercelProjectName, githubRepo, maxRetries = 2 } = context
+  const {
+    projectId,
+    vercelToken,
+    vercelProjectName,
+    githubRepo,
+    maxRetries = 2,
+  } = context
 
   // Mark deployment as starting
   await updateDeploymentStatus(projectId, 'deploying')
@@ -98,8 +123,13 @@ export async function startDeployment(
     }).catch(error => {
       console.error('Deployment monitoring failed:', error)
       // Update status to failed if monitoring itself fails
-      updateDeploymentStatus(projectId, 'failed', deployment.id, undefined,
-        'Deployment monitoring failed: ' + error.message)
+      updateDeploymentStatus(
+        projectId,
+        'failed',
+        deployment.id,
+        undefined,
+        'Deployment monitoring failed: ' + error.message
+      )
     })
 
     return {
@@ -108,10 +138,17 @@ export async function startDeployment(
       deploymentUrl: `https://${deployment.url}`,
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
 
     console.error('Deployment initiation failed:', error)
-    await updateDeploymentStatus(projectId, 'failed', undefined, undefined, errorMessage)
+    await updateDeploymentStatus(
+      projectId,
+      'failed',
+      undefined,
+      undefined,
+      errorMessage
+    )
 
     return {
       success: false,
@@ -124,32 +161,52 @@ export async function startDeployment(
 /**
  * Monitor deployment progress in background
  */
-async function monitorDeployment(context: DeploymentContext & {
-  deploymentId: string
-  attempt: number
-  maxRetries: number
-}): Promise<void> {
+async function monitorDeployment(
+  context: DeploymentContext & {
+    deploymentId: string
+    attempt: number
+    maxRetries: number
+  }
+): Promise<void> {
   const { projectId, vercelToken, deploymentId, attempt, maxRetries } = context
 
   try {
     // Wait for deployment to complete
-    const completedDeployment = await waitForDeployment(vercelToken, deploymentId)
+    const completedDeployment = await waitForDeployment(
+      vercelToken,
+      deploymentId
+    )
 
     // Success - update project with final URL and status
     const deploymentUrl = `https://${completedDeployment.url}`
-    await updateDeploymentStatus(projectId, 'deployed', deploymentId, deploymentUrl)
+    await updateDeploymentStatus(
+      projectId,
+      'deployed',
+      deploymentId,
+      deploymentUrl
+    )
 
-    console.log(`Deployment ${deploymentId} completed successfully: ${deploymentUrl}`)
+    console.log(
+      `Deployment ${deploymentId} completed successfully: ${deploymentUrl}`
+    )
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
     console.error(`Deployment ${deploymentId} failed:`, error)
 
     // Check if we should retry
     if (attempt < maxRetries && isRetryableError(error)) {
-      console.log(`Retrying deployment ${deploymentId} (attempt ${attempt + 1}/${maxRetries})`)
+      console.log(
+        `Retrying deployment ${deploymentId} (attempt ${attempt + 1}/${maxRetries})`
+      )
 
-      await updateDeploymentStatus(projectId, 'retrying', deploymentId, undefined,
-        `Retry attempt ${attempt + 1}: ${errorMessage}`)
+      await updateDeploymentStatus(
+        projectId,
+        'retrying',
+        deploymentId,
+        undefined,
+        `Retry attempt ${attempt + 1}: ${errorMessage}`
+      )
 
       // Wait before retry
       await new Promise(resolve => setTimeout(resolve, 30000)) // 30 seconds
@@ -161,10 +218,18 @@ async function monitorDeployment(context: DeploymentContext & {
       })
     } else {
       // Max retries exceeded or non-retryable error
-      await updateDeploymentStatus(projectId, 'failed', deploymentId, undefined, errorMessage)
+      await updateDeploymentStatus(
+        projectId,
+        'failed',
+        deploymentId,
+        undefined,
+        errorMessage
+      )
 
       // Could send notification to user here via email/webhook
-      console.error(`Deployment ${deploymentId} failed permanently after ${attempt} attempts`)
+      console.error(
+        `Deployment ${deploymentId} failed permanently after ${attempt} attempts`
+      )
     }
   }
 }
@@ -193,7 +258,10 @@ function isRetryableError(error: unknown): boolean {
 /**
  * Get deployment status for a project
  */
-export async function getDeploymentStatus(projectId: string, userId: string): Promise<{
+export async function getDeploymentStatus(
+  projectId: string,
+  userId: string
+): Promise<{
   status: DeploymentStatus
   deploymentUrl?: string
   error?: string
@@ -245,19 +313,26 @@ export async function cancelDeployment(
       return { success: false, error: 'Project not found' }
     }
 
-    if (project.status !== 'deploying' && project.status !== 'retrying') {
+    if (project.status !== 'GENERATING') {
       return { success: false, error: 'No deployment in progress to cancel' }
     }
 
     // Update status to indicate cancellation
-    await updateDeploymentStatus(projectId, 'failed', undefined, undefined, 'Deployment cancelled by user')
+    await updateDeploymentStatus(
+      projectId,
+      'failed',
+      undefined,
+      undefined,
+      'Deployment cancelled by user'
+    )
 
     // Note: We can't actually cancel the Vercel deployment once started,
     // but we can stop monitoring it and mark it as cancelled in our system
 
     return { success: true }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
     console.error('Failed to cancel deployment:', error)
     return { success: false, error: errorMessage }
   }
@@ -283,13 +358,17 @@ export async function retryDeployment(
     }
 
     if (!project.repository) {
-      return { success: false, error: 'Project must be generated before deployment' }
+      return {
+        success: false,
+        error: 'Project must be generated before deployment',
+      }
     }
 
     // Reset status and start new deployment
     return await startDeployment({ ...context, maxRetries: 1 }) // Single retry attempt
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error'
     console.error('Failed to retry deployment:', error)
     return { success: false, error: errorMessage }
   }
@@ -298,21 +377,27 @@ export async function retryDeployment(
 /**
  * Clean up failed deployments (for maintenance)
  */
-export async function cleanupFailedDeployments(olderThanDays: number = 7): Promise<number> {
+export async function cleanupFailedDeployments(
+  olderThanDays: number = 7
+): Promise<number> {
   try {
-    const cutoffDate = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000)
+    const cutoffDate = new Date(
+      Date.now() - olderThanDays * 24 * 60 * 60 * 1000
+    )
 
     const result = await prisma.project.updateMany({
       where: {
-        status: 'failed',
+        status: 'GENERATING', // Projects stuck in generating state
         updatedAt: { lt: cutoffDate },
       },
       data: {
-        status: 'pending', // Reset to pending for potential retry
+        status: 'READY', // Reset to ready for potential retry
       },
     })
 
-    console.log(`Reset ${result.count} failed deployments older than ${olderThanDays} days`)
+    console.log(
+      `Reset ${result.count} failed deployments older than ${olderThanDays} days`
+    )
     return result.count
   } catch (error) {
     console.error('Failed to cleanup failed deployments:', error)

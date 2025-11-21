@@ -85,7 +85,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       // Update project status to generating (outside transaction for immediate feedback)
       await prisma.project.update({
         where: { id: projectId },
-        data: { status: 'generating' },
+        data: { status: 'GENERATING' },
       })
 
       // Generate repository name from project name
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
           where: { id: projectId },
           data: {
             repository: repo.url,
-            status: 'ready', // ready for deployment
+            status: 'READY', // ready for deployment
           },
           include: {
             requirements: {

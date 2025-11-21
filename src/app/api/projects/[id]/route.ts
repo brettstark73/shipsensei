@@ -8,7 +8,7 @@ import { z } from 'zod'
 const updateProjectSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
-  status: z.enum(['draft', 'generating', 'ready', 'deployed']).optional(),
+  status: z.enum(['DRAFT', 'GENERATING', 'READY', 'DEPLOYED']).optional(),
   techStack: z.string().optional(),
   repository: z.string().url().optional(),
   deployment: z.string().url().optional(),

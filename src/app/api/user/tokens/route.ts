@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth.config'
 import { prisma } from '@/lib/prisma'
-import { encryptToken, decryptToken } from '@/lib/encryption'
+import { encryptToken } from '@/lib/encryption'
 import { z } from 'zod'
 
 // Validation schema for token updates
@@ -14,7 +14,7 @@ const tokenUpdateSchema = z.object({
 /**
  * GET /api/user/tokens - Get user's stored tokens (masked for security)
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 

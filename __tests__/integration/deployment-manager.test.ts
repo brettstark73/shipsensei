@@ -9,7 +9,7 @@ import {
   getDeploymentStatus,
   cancelDeployment,
   retryDeployment,
-  cleanupFailedDeployments
+  cleanupFailedDeployments,
 } from '@/lib/deployment-manager'
 import { prisma } from '@/lib/prisma'
 import * as vercel from '@/lib/vercel'
@@ -31,15 +31,13 @@ jest.mock('@/lib/vercel', () => ({
   waitForDeployment: jest.fn(),
 }))
 
-const mockPrismaProjectFindUnique = prisma.project.findUnique as jest.MockedFunction<
-  typeof prisma.project.findUnique
->
+const mockPrismaProjectFindUnique = prisma.project
+  .findUnique as jest.MockedFunction<typeof prisma.project.findUnique>
 const mockPrismaProjectUpdate = prisma.project.update as jest.MockedFunction<
   typeof prisma.project.update
 >
-const mockPrismaProjectUpdateMany = prisma.project.updateMany as jest.MockedFunction<
-  typeof prisma.project.updateMany
->
+const mockPrismaProjectUpdateMany = prisma.project
+  .updateMany as jest.MockedFunction<typeof prisma.project.updateMany>
 
 const mockDeployToVercel = vercel.deployToVercel as jest.MockedFunction<
   typeof vercel.deployToVercel
@@ -87,13 +85,16 @@ describe('Deployment Manager', () => {
 
       expect(result.success).toBe(true)
       expect(result.deploymentId).toBe('deployment-123')
-      expect(result.deploymentUrl).toBe('https://test-project-abc123.vercel.app')
+      expect(result.deploymentUrl).toBe(
+        'https://test-project-abc123.vercel.app'
+      )
 
-      // Verify deployment status was updated to 'deploying'
+      // Verify deployment status was updated to 'GENERATING' (mapped from 'deploying')
       expect(mockPrismaProjectUpdate).toHaveBeenCalledWith({
         where: { id: 'project-123' },
         data: {
-          status: 'deploying',
+          status: 'GENERATING',
+          deployment: undefined,
           updatedAt: expect.any(Date),
         },
       })
@@ -109,11 +110,11 @@ describe('Deployment Manager', () => {
       expect(result.error).toBe('Vercel API error')
       expect(result.retryable).toBe(false)
 
-      // Verify status was updated to 'failed'
+      // Verify status was updated to 'READY' (mapped from 'failed')
       expect(mockPrismaProjectUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            status: 'failed',
+            status: 'READY',
           }),
         })
       )
@@ -133,14 +134,14 @@ describe('Deployment Manager', () => {
   describe('Deployment Status', () => {
     it('should get deployment status successfully', async () => {
       mockPrismaProjectFindUnique.mockResolvedValue({
-        status: 'deployed',
+        status: 'DEPLOYED',
         deployment: 'https://test-project.vercel.app',
         updatedAt: new Date('2024-01-01'),
       } as any)
 
       const status = await getDeploymentStatus('project-123', 'user-456')
 
-      expect(status.status).toBe('deployed')
+      expect(status.status).toBe('DEPLOYED')
       expect(status.deploymentUrl).toBe('https://test-project.vercel.app')
       expect(status.lastUpdated).toEqual(new Date('2024-01-01'))
     })
@@ -148,15 +149,16 @@ describe('Deployment Manager', () => {
     it('should handle project not found', async () => {
       mockPrismaProjectFindUnique.mockResolvedValue(null)
 
-      await expect(getDeploymentStatus('invalid-project', 'user-456'))
-        .rejects.toThrow('Project not found')
+      await expect(
+        getDeploymentStatus('invalid-project', 'user-456')
+      ).rejects.toThrow('Project not found')
     })
   })
 
   describe('Cancel Deployment', () => {
     it('should cancel deployment in progress', async () => {
       mockPrismaProjectFindUnique.mockResolvedValue({
-        status: 'deploying',
+        status: 'GENERATING', // Projects in progress now have GENERATING status
       } as any)
       mockPrismaProjectUpdate.mockResolvedValue({} as any)
 
@@ -166,7 +168,7 @@ describe('Deployment Manager', () => {
       expect(mockPrismaProjectUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            status: 'failed',
+            status: 'READY',
           }),
         })
       )
@@ -174,7 +176,7 @@ describe('Deployment Manager', () => {
 
     it('should not cancel deployment that is not in progress', async () => {
       mockPrismaProjectFindUnique.mockResolvedValue({
-        status: 'deployed',
+        status: 'DEPLOYED',
       } as any)
 
       const result = await cancelDeployment('project-123', 'user-456')
@@ -187,7 +189,7 @@ describe('Deployment Manager', () => {
   describe('Retry Deployment', () => {
     it('should retry failed deployment', async () => {
       mockPrismaProjectFindUnique.mockResolvedValue({
-        status: 'failed',
+        status: 'READY',
         repository: 'https://github.com/user/test-repo',
       } as any)
 
@@ -212,7 +214,7 @@ describe('Deployment Manager', () => {
 
     it('should not retry deployment for project without repository', async () => {
       mockPrismaProjectFindUnique.mockResolvedValue({
-        status: 'failed',
+        status: 'READY',
         repository: null,
       } as any)
 
@@ -232,11 +234,11 @@ describe('Deployment Manager', () => {
       expect(resetCount).toBe(5)
       expect(mockPrismaProjectUpdateMany).toHaveBeenCalledWith({
         where: {
-          status: 'failed',
+          status: 'GENERATING',
           updatedAt: { lt: expect.any(Date) },
         },
         data: {
-          status: 'pending',
+          status: 'READY',
         },
       })
     })
@@ -261,6 +263,7 @@ describe('Deployment Manager', () => {
     })
 
     it('should update status on successful deployment', async () => {
+      jest.useRealTimers() // Use real timers for this async test
       const mockCompletedDeployment = {
         id: 'deployment-123',
         url: 'test-project-final.vercel.app',
@@ -288,20 +291,20 @@ describe('Deployment Manager', () => {
       const startPromise = startDeployment(mockContext)
 
       // Fast-forward to allow background monitoring to complete
-      jest.runAllTimers()
+      // Using real timers, so no need for jest.runAllTimers()
 
       const result = await startPromise
 
       expect(result.success).toBe(true)
 
       // Allow background monitoring to complete
-      await new Promise(resolve => setImmediate(resolve))
+      await new Promise(resolve => setTimeout(resolve, 0))
 
       // Verify final status update
       expect(mockPrismaProjectUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            status: 'deployed',
+            status: 'DEPLOYED',
             deployment: 'https://test-project-final.vercel.app',
           }),
         })
@@ -309,6 +312,7 @@ describe('Deployment Manager', () => {
     })
 
     it('should handle monitoring failure with retry', async () => {
+      jest.useRealTimers() // Use real timers for this async test
       const mockInitialDeployment = {
         id: 'deployment-123',
         url: 'test-project-temp.vercel.app',
@@ -338,14 +342,14 @@ describe('Deployment Manager', () => {
       expect(result.success).toBe(true)
 
       // Allow monitoring and retry to complete
-      jest.runAllTimers()
-      await new Promise(resolve => setImmediate(resolve))
+      // Using real timers, so no need for jest.runAllTimers()
+      await new Promise(resolve => setTimeout(resolve, 0))
 
-      // Verify retry status update
+      // Verify retry status update (retrying maps to GENERATING, then failure maps to READY)
       expect(mockPrismaProjectUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            status: 'retrying',
+            status: 'GENERATING',
           }),
         })
       )

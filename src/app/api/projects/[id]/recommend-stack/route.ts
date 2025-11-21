@@ -62,7 +62,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       where: { id: projectId },
       data: {
         techStack: JSON.stringify(recommendation),
-        status: 'ready', // Mark as ready for generation
+        status: 'READY', // Mark as ready for generation
       },
       include: {
         requirements: {

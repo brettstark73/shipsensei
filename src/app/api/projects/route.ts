@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         name,
         description,
         userId: session.user.id,
-        status: 'draft',
+        status: 'DRAFT',
       },
       include: {
         requirements: true,

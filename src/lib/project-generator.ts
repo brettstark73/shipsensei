@@ -197,7 +197,7 @@ Include:
 Return ONLY the markdown content, no code fences.`
 
   try {
-    const response = await anthropic.messages.create({
+    const response = await anthropic().messages.create({
       model: process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022',
       max_tokens: 2048,
       messages: [
@@ -280,7 +280,7 @@ Create a simple, professional landing page with:
 Return ONLY the React component code, no explanation.`
 
   try {
-    const response = await anthropic.messages.create({
+    const response = await anthropic().messages.create({
       model: process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022',
       max_tokens: 2048,
       messages: [

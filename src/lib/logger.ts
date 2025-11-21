@@ -134,7 +134,10 @@ class Logger {
         ...context,
         operation,
         duration,
-        success: true,
+        metadata: {
+          ...context.metadata,
+          success: true,
+        },
       })
 
       return result
@@ -147,8 +150,11 @@ class Logger {
         ...context,
         operation,
         duration,
-        success: false,
-        error: errorMessage,
+        metadata: {
+          ...context.metadata,
+          success: false,
+          error: errorMessage,
+        },
       })
 
       throw error
@@ -170,10 +176,13 @@ class Logger {
     this.log(level, `API ${method} ${url} - ${statusCode}`, {
       ...context,
       operation: 'api_request',
-      method,
-      url,
-      statusCode,
       duration,
+      metadata: {
+        ...context.metadata,
+        method,
+        url,
+        statusCode,
+      },
     })
   }
 
@@ -189,9 +198,12 @@ class Logger {
     this.info(`Database ${operation} on ${table}`, {
       ...context,
       operation: 'database',
-      dbOperation: operation,
-      table,
       duration,
+      metadata: {
+        ...context.metadata,
+        dbOperation: operation,
+        table,
+      },
     })
   }
 
@@ -209,8 +221,11 @@ class Logger {
     this.log(level, `Security event: ${event}`, {
       ...context,
       operation: 'security',
-      securityEvent: event,
-      severity,
+      metadata: {
+        ...context.metadata,
+        securityEvent: event,
+        severity,
+      },
     })
   }
 
@@ -226,9 +241,12 @@ class Logger {
     this.info(`Performance metric: ${metric}`, {
       ...context,
       operation: 'performance',
-      metric,
-      value,
-      unit,
+      metadata: {
+        ...context.metadata,
+        metric,
+        value,
+        unit,
+      },
     })
   }
 }
@@ -276,6 +294,6 @@ export class PerformanceTimer {
 /**
  * Create performance timer
  */
-export function createTimer(logger: Logger = logger): PerformanceTimer {
-  return new PerformanceTimer(logger)
+export function createTimer(loggerInstance: Logger = logger): PerformanceTimer {
+  return new PerformanceTimer(loggerInstance)
 }

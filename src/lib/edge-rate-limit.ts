@@ -70,7 +70,7 @@ class RedisStorage implements RateLimitStorage {
   async get(key: string): Promise<RateLimitEntry | null> {
     try {
       const result = await this.request(['GET', key])
-      return result ? JSON.parse(result) : null
+      return result && typeof result === 'string' ? JSON.parse(result) : null
     } catch (error) {
       console.warn('Redis GET failed:', error)
       return null
@@ -82,7 +82,7 @@ class RedisStorage implements RateLimitStorage {
       await this.request([
         'SETEX',
         key,
-        Math.ceil(ttlMs / 1000),
+        Math.ceil(ttlMs / 1000).toString(),
         JSON.stringify(entry),
       ])
     } catch (error) {
@@ -101,7 +101,7 @@ class RedisStorage implements RateLimitStorage {
         },
         body: JSON.stringify([
           ['INCR', key],
-          ['EXPIRE', key, Math.ceil(ttlMs / 1000)],
+          ['EXPIRE', key, Math.ceil(ttlMs / 1000).toString()],
         ]),
       })
 
@@ -159,6 +159,24 @@ class MemoryStorage implements RateLimitStorage {
     await this.set(key, { count: newCount, windowStart, expiresAt }, ttlMs)
     return newCount
   }
+
+  /**
+   * Clear entries matching a pattern (for testing purposes)
+   */
+  clearByPattern(pattern: string): number {
+    const keysToDelete: string[] = []
+    const keys = Array.from(this.store.keys())
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+      if (key.includes(pattern)) {
+        keysToDelete.push(key)
+      }
+    }
+
+    keysToDelete.forEach(key => this.store.delete(key))
+    return keysToDelete.length
+  }
 }
 
 // Cached storage instance (singleton pattern)
@@ -181,8 +199,8 @@ function getStorage(): RateLimitStorage {
     if (!redisUrl || !redisToken) {
       const error = new Error(
         'UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are required in production for secure rate limiting.\n' +
-        'In-memory fallback is insecure in production environments.\n' +
-        'Configure Redis: https://upstash.com'
+          'In-memory fallback is insecure in production environments.\n' +
+          'Configure Redis: https://upstash.com'
       )
       console.error('🚫 CRITICAL RATE LIMITING ERROR:', error.message)
       throw error
@@ -195,7 +213,7 @@ function getStorage(): RateLimitStorage {
     // Only allow in-memory storage in development/test
     console.warn(
       '⚠️ Using in-memory rate limiting. This provides best-effort protection only and resets on cold starts. ' +
-      'Configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for production use.'
+        'Configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for production use.'
     )
     cachedStorage = new MemoryStorage()
   }
@@ -260,7 +278,9 @@ export async function checkRateLimit(
     }
 
     // In development, fail open to avoid blocking developers
-    console.warn('Rate limiting disabled due to storage failure (development mode)')
+    console.warn(
+      'Rate limiting disabled due to storage failure (development mode)'
+    )
     return {
       limited: false,
       remaining: limit - 1,
@@ -335,21 +355,7 @@ export async function clearRateLimit(identifier: string): Promise<void> {
   // Note: This is a best-effort implementation for in-memory storage
   // For Redis, would need to implement pattern-based deletion
   if (storage instanceof MemoryStorage) {
-    // Direct access to private store - simplified for testing purposes only
-    const memStorage = storage as MemoryStorage & {
-      store: Map<string, RateLimitEntry>
-    }
-
-    if (memStorage.store) {
-      const keysToDelete: string[] = []
-      for (const [key] of memStorage.store.entries()) {
-        if (key.includes(`ratelimit:${identifier}:`)) {
-          keysToDelete.push(key)
-        }
-      }
-
-      keysToDelete.forEach(key => memStorage.store.delete(key))
-    }
+    storage.clearByPattern(`ratelimit:${identifier}:`)
   }
 
   // For Redis storage, keys will naturally expire

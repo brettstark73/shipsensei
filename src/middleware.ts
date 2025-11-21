@@ -71,10 +71,13 @@ export async function middleware(request: NextRequest) {
       logger.logSecurityEvent('rate_limit_exceeded', 'medium', {
         requestId,
         userId,
-        identifier,
-        limit,
-        duration,
-        metadata: { pathname, userAgent: request.headers.get('user-agent') },
+        metadata: {
+          pathname,
+          userAgent: request.headers.get('user-agent'),
+          identifier,
+          limit,
+          duration,
+        },
       })
 
       return NextResponse.json(
@@ -114,8 +117,10 @@ export async function middleware(request: NextRequest) {
       {
         requestId,
         userId,
-        remaining,
-        metadata: { userAgent: request.headers.get('user-agent') },
+        metadata: {
+          userAgent: request.headers.get('user-agent'),
+          remaining,
+        },
       }
     )
 
@@ -126,10 +131,12 @@ export async function middleware(request: NextRequest) {
     // Log middleware error
     logger.error('Rate limiter middleware error', {
       requestId,
-      operation: 'middleware',
-      duration,
-      error: error instanceof Error ? error.message : String(error),
-      metadata: { pathname },
+      metadata: {
+        pathname,
+        operation: 'middleware',
+        duration,
+        error: error instanceof Error ? error.message : String(error),
+      },
     })
 
     // Fail closed in production for security, fail open in development
@@ -139,10 +146,13 @@ export async function middleware(request: NextRequest) {
       logger.logSecurityEvent('rate_limiter_failure', 'high', {
         requestId,
         userId,
-        identifier,
-        duration,
-        error: error instanceof Error ? error.message : String(error),
-        metadata: { pathname, userAgent: request.headers.get('user-agent') },
+        metadata: {
+          pathname,
+          userAgent: request.headers.get('user-agent'),
+          identifier,
+          duration,
+          error: error instanceof Error ? error.message : String(error),
+        },
       })
 
       return NextResponse.json(
