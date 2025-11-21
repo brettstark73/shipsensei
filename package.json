@@ -28,7 +28,11 @@
     "validate:docs": "npx create-quality-automation@latest --validate-docs",
     "validate:comprehensive": "npx create-quality-automation@latest --comprehensive",
     "validate:all": "npm run validate:comprehensive && npm run security:audit",
-    "generate:encryption-key": "node scripts/generate-encryption-key.js",
+    "setup-encryption": "node scripts/setup-encryption.js",
+    "encrypt-existing-tokens": "node scripts/encrypt-existing-tokens.js",
+    "check-encryption": "node -e \"if(!process.env.ENCRYPTION_KEY||process.env.ENCRYPTION_KEY.length!==64){console.error('❌ ENCRYPTION_KEY missing or invalid');process.exit(1)}else{console.log('✅ ENCRYPTION_KEY configured')}\"",
+    "check-redis": "node scripts/check-redis.js",
+    "check-production-config": "npm run check-encryption && npm run check-redis",
     "lint:fix": "eslint . --ext .js,.jsx,.mjs,.cjs,.ts,.tsx,.html --fix && stylelint \"src/**/*.{css,scss,sass,less,pcss}\" --fix --allow-empty-input"
   },
   "dependencies": {

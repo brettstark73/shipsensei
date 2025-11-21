@@ -124,6 +124,30 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || 'test-google-secret' }}
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
 
+      - name: Encryption key validation
+        run: |
+          # Verify ENCRYPTION_KEY is configured and valid
+          echo "🔐 Validating encryption key configuration..."
+          npm run check-encryption
+        env:
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+
+      - name: Redis configuration check
+        run: |
+          # Check Redis configuration for rate limiting
+          echo "⚡ Validating Redis configuration..."
+          if [ "$NODE_ENV" = "production" ]; then
+            # In production-like CI, require Redis config
+            npm run check-redis
+          else
+            # In non-production, warn if Redis is missing but don't fail
+            npm run check-redis || echo "⚠️ Redis not configured - using in-memory fallback"
+          fi
+        env:
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          NODE_ENV: test
+
       - name: Security audit
         run: npm audit --audit-level high
 

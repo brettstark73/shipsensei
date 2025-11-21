@@ -15,15 +15,20 @@ export const prisma =
           : ['error'],
     })
 
-    // Add token encryption middleware only if encryption key is available
-    // Skip in development/test if ENCRYPTION_KEY is not set
-    if (process.env.ENCRYPTION_KEY) {
-      client.$use(tokenEncryptionMiddleware)
-    } else if (process.env.NODE_ENV === 'production') {
-      console.warn(
-        '⚠️ ENCRYPTION_KEY not set in production - OAuth tokens will not be encrypted'
+    // Encryption is mandatory in all environments for security
+    // Fail fast if ENCRYPTION_KEY is not configured
+    if (!process.env.ENCRYPTION_KEY) {
+      const error = new Error(
+        'ENCRYPTION_KEY environment variable is required for OAuth token security.\n' +
+        'Generate with: openssl rand -hex 32\n' +
+        'Set in .env.local: ENCRYPTION_KEY=your_generated_key'
       )
+      console.error('🔐 CRITICAL SECURITY ERROR:', error.message)
+      throw error
     }
+
+    // Always apply token encryption middleware
+    client.$use(tokenEncryptionMiddleware)
 
     return client
   })()

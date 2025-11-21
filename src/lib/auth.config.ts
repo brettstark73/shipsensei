@@ -27,23 +27,17 @@ export const authOptions: NextAuthOptions = {
     error: '/auth/error',
   },
   callbacks: {
-    async session({ session, user, token }) {
+    async session({ session, user }) {
       if (session.user) {
-        session.user.id = user?.id || (token?.sub as string)
+        session.user.id = user?.id
       }
 
-      // SECURITY: Never expose OAuth tokens to client sessions
-      // Access tokens are kept server-side only in JWT
+      // SECURITY: OAuth tokens are stored encrypted in database
+      // Never expose tokens to client sessions or JWT tokens
 
       return session
     },
-    async jwt({ token, account }) {
-      // Store access token in JWT for server-side use only
-      if (account?.access_token) {
-        token.accessToken = account.access_token
-      }
-      return token
-    },
+    // JWT callback removed - tokens stored in encrypted database Account table
   },
   session: {
     strategy: 'database',

@@ -176,10 +176,27 @@ function getStorage(): RateLimitStorage {
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN
 
+  // In production, Redis is mandatory for security
+  if (process.env.NODE_ENV === 'production') {
+    if (!redisUrl || !redisToken) {
+      const error = new Error(
+        'UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are required in production for secure rate limiting.\n' +
+        'In-memory fallback is insecure in production environments.\n' +
+        'Configure Redis: https://upstash.com'
+      )
+      console.error('🚫 CRITICAL RATE LIMITING ERROR:', error.message)
+      throw error
+    }
+  }
+
   if (redisUrl && redisToken) {
     cachedStorage = new RedisStorage(redisUrl, redisToken)
   } else {
-    // Fallback to in-memory storage
+    // Only allow in-memory storage in development/test
+    console.warn(
+      '⚠️ Using in-memory rate limiting. This provides best-effort protection only and resets on cold starts. ' +
+      'Configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for production use.'
+    )
     cachedStorage = new MemoryStorage()
   }
 
@@ -227,10 +244,23 @@ export async function checkRateLimit(
       retryAfter: 0,
     }
   } catch (error) {
-    console.warn('Rate limit check failed:', error)
+    console.error('Rate limit check failed:', error)
 
-    // Fail open - allow the request if storage is down
-    // Better than failing closed and blocking all traffic
+    // Fail closed in production for security - block request if storage fails
+    // Fail open in development for better DX
+    if (process.env.NODE_ENV === 'production') {
+      // In production, storage failure means we cannot reliably enforce limits
+      // Safer to deny than allow potential abuse
+      return {
+        limited: true,
+        remaining: 0,
+        resetTime,
+        retryAfter: 60, // Retry after 60 seconds
+      }
+    }
+
+    // In development, fail open to avoid blocking developers
+    console.warn('Rate limiting disabled due to storage failure (development mode)')
     return {
       limited: false,
       remaining: limit - 1,
@@ -274,9 +304,19 @@ export async function getRateLimitStatus(
         existing.count >= limit ? Math.ceil((resetTime - now) / 1000) : 0,
     }
   } catch (error) {
-    console.warn('Rate limit status check failed:', error)
+    console.error('Rate limit status check failed:', error)
 
-    // Fail open - assume not limited if storage is down
+    // Fail closed in production for security
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        limited: true,
+        remaining: 0,
+        resetTime,
+        retryAfter: 60,
+      }
+    }
+
+    // Fail open in development
     return {
       limited: false,
       remaining: limit,

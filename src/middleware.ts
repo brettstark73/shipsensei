@@ -132,9 +132,40 @@ export async function middleware(request: NextRequest) {
       metadata: { pathname },
     })
 
-    // Fail open - allow the request if rate limiter fails
+    // Fail closed in production for security, fail open in development
+    if (process.env.NODE_ENV === 'production') {
+      // In production, rate limiter failure is a security issue
+      // Block the request to prevent potential abuse
+      logger.logSecurityEvent('rate_limiter_failure', 'high', {
+        requestId,
+        userId,
+        identifier,
+        duration,
+        error: error instanceof Error ? error.message : String(error),
+        metadata: { pathname, userAgent: request.headers.get('user-agent') },
+      })
+
+      return NextResponse.json(
+        {
+          error: 'Service temporarily unavailable',
+          message: 'Please try again later',
+          requestId,
+        },
+        {
+          status: 503,
+          headers: {
+            'Retry-After': '60',
+            'X-Request-ID': requestId,
+          },
+        }
+      )
+    }
+
+    // In development, fail open to avoid blocking developers
+    console.warn('Rate limiting disabled due to error (development mode)')
     const response = NextResponse.next()
     response.headers.set('X-Request-ID', requestId)
+    response.headers.set('X-Rate-Limit-Warning', 'Rate limiting disabled')
     return response
   }
 }
