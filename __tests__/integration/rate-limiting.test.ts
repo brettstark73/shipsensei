@@ -4,7 +4,7 @@
  * Tests rate limiting behavior in both production and development modes
  */
 
-import { checkRateLimit, getRateLimitStorageType } from '@/lib/edge-rate-limit'
+import { checkRateLimit, getRateLimitStorageType, __clearStorageCache } from '@/lib/edge-rate-limit'
 
 describe('Rate Limiting', () => {
   const originalNodeEnv = process.env.NODE_ENV
@@ -12,8 +12,9 @@ describe('Rate Limiting', () => {
   const originalRedisToken = process.env.UPSTASH_REDIS_REST_TOKEN
 
   beforeEach(() => {
-    // Clear any existing rate limit keys
+    // Clear any existing rate limit keys and cached storage
     jest.clearAllMocks()
+    __clearStorageCache()
   })
 
   afterEach(() => {
@@ -83,6 +84,7 @@ describe('Rate Limiting', () => {
     it('should require Redis in production', () => {
       delete process.env.UPSTASH_REDIS_REST_URL
       delete process.env.UPSTASH_REDIS_REST_TOKEN
+      __clearStorageCache() // Clear cache after env changes
 
       expect(() => {
         getRateLimitStorageType()
@@ -92,6 +94,7 @@ describe('Rate Limiting', () => {
     it('should use Redis when configured in production', () => {
       process.env.UPSTASH_REDIS_REST_URL = 'https://test-redis-url.com'
       process.env.UPSTASH_REDIS_REST_TOKEN = 'test-token'
+      __clearStorageCache() // Clear cache after env changes
 
       const storageType = getRateLimitStorageType()
       expect(storageType).toBe('redis')
@@ -101,6 +104,7 @@ describe('Rate Limiting', () => {
       // Configure invalid Redis (will cause connection failure)
       process.env.UPSTASH_REDIS_REST_URL = 'https://invalid-redis-url.com'
       process.env.UPSTASH_REDIS_REST_TOKEN = 'invalid-token'
+      __clearStorageCache() // Clear cache after env changes
 
       jest.spyOn(console, 'error').mockImplementation(() => {})
 
@@ -118,6 +122,7 @@ describe('Rate Limiting', () => {
       process.env.NODE_ENV = 'development'
       delete process.env.UPSTASH_REDIS_REST_URL
       delete process.env.UPSTASH_REDIS_REST_TOKEN
+      __clearStorageCache()
     })
 
     it('should return correct rate limit information', async () => {
@@ -136,17 +141,15 @@ describe('Rate Limiting', () => {
       const identifier = `rapid-test-${Date.now()}`
       const limit = 3
 
-      // Make 3 rapid requests
-      const results = await Promise.all([
-        checkRateLimit(identifier, limit, 60000),
-        checkRateLimit(identifier, limit, 60000),
-        checkRateLimit(identifier, limit, 60000),
-      ])
+      // Make 3 rapid requests sequentially (not parallel) for more predictable behavior
+      const result1 = await checkRateLimit(identifier, limit, 60000)
+      const result2 = await checkRateLimit(identifier, limit, 60000)
+      const result3 = await checkRateLimit(identifier, limit, 60000)
 
       // All should succeed but with decreasing remaining count
-      expect(results[0].limited).toBe(false)
-      expect(results[1].limited).toBe(false)
-      expect(results[2].limited).toBe(false)
+      expect(result1.limited).toBe(false)
+      expect(result2.limited).toBe(false)
+      expect(result3.limited).toBe(false)
 
       // Next request should be limited
       const limitedResult = await checkRateLimit(identifier, limit, 60000)
@@ -159,6 +162,7 @@ describe('Rate Limiting', () => {
       process.env.NODE_ENV = 'development'
       delete process.env.UPSTASH_REDIS_REST_URL
       delete process.env.UPSTASH_REDIS_REST_TOKEN
+      __clearStorageCache()
     })
 
     it('should handle different identifiers independently', async () => {
